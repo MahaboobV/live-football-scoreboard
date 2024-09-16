@@ -17,6 +17,8 @@ public class Scoreboard implements MatchOperations {
 
     @Override
     public void startMatch(String homeTeam, String awayTeam) {
+        Match match = new Match(homeTeam, awayTeam, 0, 0); // Create a new match with 0-0 score
+        matchStorage.saveMatch(match); // Save the match to the storage
     }
 
     @Override
