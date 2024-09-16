@@ -12,5 +12,5 @@ public interface MatchOperations {
 
     void finishMatch(String matchId);
 
-    List<Match> getMatchSummary();
+    List<String> getMatchSummary();
 }

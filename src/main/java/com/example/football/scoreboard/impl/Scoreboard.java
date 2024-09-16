@@ -7,8 +7,11 @@ import com.example.football.scoreboard.exception.MatchNotFoundException;
 import com.example.football.scoreboard.exception.MatchUpdateException;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Scoreboard implements MatchOperations {
 
@@ -74,8 +77,22 @@ public class Scoreboard implements MatchOperations {
     }
 
     @Override
-    public List<Match> getMatchSummary() {
-        return null;
+    public List<String> getMatchSummary() {
+        List<Match> liveMatches = matchStorage.getAllMatches();
+
+        List<Match> sortedMatches =  liveMatches.stream()
+                .filter(Match::isLive)
+                .sorted(Comparator.comparingInt(Match::getTotalScore).reversed()
+                        .thenComparing(Match::getStartTime, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+
+        return IntStream.range(0, sortedMatches.size())
+                .mapToObj(i-> {
+                    Match match = sortedMatches.get(i);
+                    return (i+1) +". "+ match.getHomeTeam() +" "+ match.getHomeTeamScore()+
+                            " - "+match.getAwayTeam() +" "+ match.getAwayTeamScore();
+
+                }).collect(Collectors.toList());
     }
 
     private Match createNewMatch(String homeTeam, String awayTeam) {
