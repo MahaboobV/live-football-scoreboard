@@ -53,6 +53,14 @@ public class Scoreboard implements MatchOperations {
     @Override
     public void finishMatch(String matchId) {
 
+        Match match = Optional.ofNullable(matchStorage.findMatch(matchId))
+                        .orElseThrow(() ->new MatchNotFoundException("No match found with ID: "+matchId));
+        if(! match.isLive()) {
+            throw new IllegalStateException("The match is already finished");
+        }
+
+        match.setLive(false); // Set the match as finished
+        matchStorage.saveMatch(match); // Save the updated match state
     }
 
     @Override

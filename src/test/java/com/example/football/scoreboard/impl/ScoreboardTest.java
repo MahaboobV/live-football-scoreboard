@@ -175,12 +175,12 @@ public class ScoreboardTest {
     @Test
     void testFinishMatch_InvalidMatch() {
         // Arrange
-        String matchId = "invalidmatchId";
+        String matchId = "invalidMatchId";
         when(matchStorage.findMatch(matchId)).thenReturn(null); //match not found
 
         // Act && Assert
         MatchNotFoundException exception = assertThrows(MatchNotFoundException.class, ()-> scoreboard.finishMatch(matchId));
-        assertEquals("No match found with ID: InvalidMatchId", exception.getMessage());
+        assertEquals("No match found with ID: invalidMatchId", exception.getMessage());
     }
 
     @Test
