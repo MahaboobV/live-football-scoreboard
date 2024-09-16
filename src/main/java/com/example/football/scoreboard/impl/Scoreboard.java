@@ -15,12 +15,12 @@ public class Scoreboard implements MatchOperations {
         this.matchStorage = matchStorage;
     }
 
-
+    // Create a new match, sets it as live, and saves it to storage
     @Override
     public void startMatch(String homeTeam, String awayTeam) {
         Match match = createNewMatch(homeTeam, awayTeam);
-        match.setLive(true); // Setting match status as Live
-        matchStorage.saveMatch(match); // Save the match to the storage
+        match.setLive(true);
+        matchStorage.saveMatch(match);
     }
 
     @Override
@@ -44,8 +44,8 @@ public class Scoreboard implements MatchOperations {
     }
 
     private Match createNewMatch(String homeTeam, String awayTeam) {
-        LocalDateTime now = LocalDateTime.now(); // Sett startTime as current time
-        return new Match(homeTeam, awayTeam, 0, 0, now); // Create a new match with 0-0 score
+        LocalDateTime now = LocalDateTime.now();
+        return new Match(homeTeam, awayTeam, 0, 0, now);
 
     }
 }

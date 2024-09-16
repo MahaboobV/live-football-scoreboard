@@ -24,7 +24,7 @@ public class Match {
         this.homeTeamScore = homeTeamScore;
         this.awayTeamScore = awayTeamScore;
         this.startTime = startTime;
-        this.isLive = false;
+        this.isLive = false; // Default value
     }
 
     public String getHomeTeam() {
