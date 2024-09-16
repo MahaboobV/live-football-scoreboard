@@ -11,8 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -150,5 +149,55 @@ public class ScoreboardTest {
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> scoreboard.updateMatchScore(matchId, 1, -1));
         assertEquals("Score cannot be negative", exception.getMessage());
+    }
+
+    @Test
+    void testFinishMatch_ValidMatch() {
+        // Arrange
+        String matchId = "match1";
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
+
+        Match match = new Match(homeTeam, awayTeam, 0, 0, now);
+        match.setLive(true);
+
+        when(matchStorage.findMatch(matchId)).thenReturn(match);
+
+        // Act
+        scoreboard.finishMatch(matchId);
+
+        // Assert
+        assertFalse(match.isLive());
+        verify(matchStorage).saveMatch(match); // Ensure the match is saved after finishing
+    }
+
+    @Test
+    void testFinishMatch_InvalidMatch() {
+        // Arrange
+        String matchId = "invalidmatchId";
+        when(matchStorage.findMatch(matchId)).thenReturn(null); //match not found
+
+        // Act && Assert
+        MatchNotFoundException exception = assertThrows(MatchNotFoundException.class, ()-> scoreboard.finishMatch(matchId));
+        assertEquals("No match found with ID: InvalidMatchId", exception.getMessage());
+    }
+
+    @Test
+    void testFinishMatch_AlreadyFinsihedMatch() {
+        // Arrange
+        // Arrange
+        String matchId = "match1";
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
+
+        Match match = new Match(homeTeam, awayTeam, 2, 1, now);
+        match.setLive(false); // The match is already finished
+        when(matchStorage.findMatch(matchId)).thenReturn(match);
+
+        // Act && Assert
+        IllegalStateException exception = assertThrows(IllegalStateException.class, ()-> scoreboard.finishMatch(matchId));
+        assertEquals("The match is already finished", exception.getMessage());
     }
 }
