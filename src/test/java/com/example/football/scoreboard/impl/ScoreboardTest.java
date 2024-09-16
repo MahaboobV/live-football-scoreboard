@@ -106,4 +106,38 @@ public class ScoreboardTest {
         // Assert the exception message
         assertEquals("Match ID cannot be null or empty", spaceException.getMessage());
     }
+
+    @Test
+    void testUpdateMatchScore_ValidMatch() {
+        // Arrange
+        String matchId = "match1";
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
+
+        Match match = new Match(homeTeam, awayTeam, 0, 0, now);
+
+        when(matchStorage.findMatch(matchId)).thenReturn(match);
+
+        // Act
+        scoreboard.updateMatchScore(matchId, 3, 2);
+
+        // Assert
+        assertEquals(3, match.getHomeTeamScore());
+        assertEquals(2, match.getAwayTeamScore());
+        verify(matchStorage).saveMatch(match);
+
+    }
+
+    @Test
+    void testUpdateMatchScore_InvalidMatch() {
+
+        // Arrange
+        String matchId = "InvalidMatchId";
+        when(matchStorage.findMatch(matchId)).thenReturn(null);
+
+        // Act & Assert
+        MatchNotFoundException exception = assertThrows(MatchNotFoundException.class, () -> scoreboard.updateMatchScore(matchId, 2, 1));
+        assertEquals("No match found with ID: InvalidMatchId", exception.getMessage());
+    }
 }
