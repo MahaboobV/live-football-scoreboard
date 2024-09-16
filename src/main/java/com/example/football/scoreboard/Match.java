@@ -18,12 +18,13 @@ public class Match {
 
     private int totalScore;
 
-    public Match(String homeTeam, String awayTeam, int homeTeamScore, int awayTeamScore) {
+    public Match(String homeTeam, String awayTeam, int homeTeamScore, int awayTeamScore, LocalDateTime startTime) {
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.homeTeamScore = homeTeamScore;
         this.awayTeamScore = awayTeamScore;
-        this.startTime = LocalDateTime.now();
+        this.startTime = startTime;
+        this.isLive = false;
     }
 
     public String getHomeTeam() {
