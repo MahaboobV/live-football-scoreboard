@@ -37,6 +37,13 @@ public class Scoreboard implements MatchOperations {
     @Override
     public void updateMatchScore(String matchId, int scoreA, int scoreB) {
 
+        Match match = Optional.ofNullable(matchStorage.findMatch(matchId))
+                       .orElseThrow(() -> new MatchNotFoundException("No match found with ID: "+matchId));
+
+        match.setHomeTeamScore(scoreA);
+        match.setAwayTeamScore(scoreB);
+
+        matchStorage.saveMatch(match);
     }
 
     @Override
