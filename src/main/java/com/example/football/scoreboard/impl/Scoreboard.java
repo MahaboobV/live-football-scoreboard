@@ -35,7 +35,7 @@ public class Scoreboard implements MatchOperations {
     }
 
     @Override
-    public void updateMatchScore(int scoreA, int scoreB) {
+    public void updateMatchScore(String matchId, int scoreA, int scoreB) {
 
     }
 

@@ -8,7 +8,7 @@ public interface MatchOperations {
 
     Match getMatch(String matchId);
 
-    void updateMatchScore(int scoreA, int scoreB);
+    void updateMatchScore(String matchId, int scoreA, int scoreB);
 
     void finishMatch();
 
