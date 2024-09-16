@@ -16,7 +16,7 @@ public class InmemoryMatchStorage implements MatchStorage {
     }
 
     @Override
-    public Match findMatch(String homeTeam, String awayTeam) {
+    public Match findMatch(String matchId) {
         return null;
     }
 

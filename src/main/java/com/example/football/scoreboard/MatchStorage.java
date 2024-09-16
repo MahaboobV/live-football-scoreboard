@@ -6,7 +6,7 @@ public interface MatchStorage {
     
     void saveMatch(Match match);
 
-    Match findMatch(String homeTeam, String awayTeam);
+    Match findMatch(String matchId);
 
     void removeMatch(Match match);
 

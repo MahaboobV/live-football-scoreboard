@@ -6,7 +6,7 @@ public interface MatchOperations {
 
     void startMatch(String homeTeam, String awayTeam);
 
-    Match getMatch(Match match);
+    Match getMatch(String matchId);
 
     void updateMatchScore(int scoreA, int scoreB);
 

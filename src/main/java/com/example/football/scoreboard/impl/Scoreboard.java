@@ -24,7 +24,7 @@ public class Scoreboard implements MatchOperations {
     }
 
     @Override
-    public Match getMatch(Match match) {
+    public Match getMatch(String matchId) {
         return null;
     }
 
