@@ -3,6 +3,7 @@ package com.example.football.scoreboard.impl;
 import com.example.football.scoreboard.Match;
 import com.example.football.scoreboard.MatchOperations;
 import com.example.football.scoreboard.MatchStorage;
+import com.example.football.scoreboard.exception.MatchNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +26,14 @@ public class Scoreboard implements MatchOperations {
 
     @Override
     public Match getMatch(String matchId) {
-        return null;
+        if (matchId == null || matchId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Match ID cannot be null or empty");
+        }
+        Match match = matchStorage.findMatch(matchId);
+        if(match == null) {
+            throw new MatchNotFoundException("No match found with ID: "+matchId);
+        }
+        return match;
     }
 
     @Override
