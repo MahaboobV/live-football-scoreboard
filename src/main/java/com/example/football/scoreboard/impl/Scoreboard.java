@@ -51,7 +51,7 @@ public class Scoreboard implements MatchOperations {
     }
 
     @Override
-    public void finishMatch() {
+    public void finishMatch(String matchId) {
 
     }
 

@@ -10,7 +10,7 @@ public interface MatchOperations {
 
     void updateMatchScore(String matchId, int scoreA, int scoreB);
 
-    void finishMatch();
+    void finishMatch(String matchId);
 
     List<Match> getMatchSummary();
 }
