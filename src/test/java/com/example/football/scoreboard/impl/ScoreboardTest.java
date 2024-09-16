@@ -3,6 +3,7 @@ package com.example.football.scoreboard.impl;
 import com.example.football.scoreboard.Match;
 import com.example.football.scoreboard.MatchStorage;
 import com.example.football.scoreboard.exception.MatchNotFoundException;
+import com.example.football.scoreboard.exception.MatchUpdateException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,11 +12,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 public class ScoreboardTest {
@@ -186,7 +189,6 @@ public class ScoreboardTest {
     @Test
     void testFinishMatch_AlreadyFinsihedMatch() {
         // Arrange
-        // Arrange
         String matchId = "match1";
         String homeTeam = "Team A";
         String awayTeam = "Team B";
@@ -199,5 +201,47 @@ public class ScoreboardTest {
         // Act && Assert
         IllegalStateException exception = assertThrows(IllegalStateException.class, ()-> scoreboard.finishMatch(matchId));
         assertEquals("The match is already finished", exception.getMessage());
+    }
+
+    @Test
+    void testFinishMatchById_NullOrEmptyId() {
+        // Act & Assert
+        IllegalArgumentException nullException = assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch(null));
+
+        // Assert the exception message
+        assertEquals("Match ID cannot be null or empty", nullException.getMessage());
+
+        // Act & Assert
+        IllegalArgumentException emptyException = assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch(""));
+
+        // Assert the exception message
+        assertEquals("Match ID cannot be null or empty", emptyException.getMessage());
+
+        // Act & Assert
+        IllegalArgumentException spaceException = assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch(" "));
+
+        // Assert the exception message
+        assertEquals("Match ID cannot be null or empty", spaceException.getMessage());
+    }
+
+    @Test
+    void testFinishMatchSaveFailure() {
+
+        // Arrange
+        String matchId = "match1";
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
+
+        Match liveMatch = new Match(homeTeam, awayTeam, 2, 1, now);
+        liveMatch.setLive(true); // The match is already finished
+
+        when(matchStorage.findMatch(matchId)).thenReturn(liveMatch);
+        doThrow(new RuntimeException("Database error")).when(matchStorage).saveMatch(liveMatch);
+
+        // Act && Assert
+        MatchUpdateException exception = assertThrows(MatchUpdateException.class, () -> scoreboard.finishMatch(matchId));
+
+        assertEquals("Failed to update the match status", exception.getMessage());
     }
 }

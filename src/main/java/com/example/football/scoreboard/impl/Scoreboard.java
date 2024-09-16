@@ -4,6 +4,7 @@ import com.example.football.scoreboard.Match;
 import com.example.football.scoreboard.MatchOperations;
 import com.example.football.scoreboard.MatchStorage;
 import com.example.football.scoreboard.exception.MatchNotFoundException;
+import com.example.football.scoreboard.exception.MatchUpdateException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,6 +54,10 @@ public class Scoreboard implements MatchOperations {
     @Override
     public void finishMatch(String matchId) {
 
+        if(matchId == null || matchId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Match ID cannot be null or empty");
+        }
+
         Match match = Optional.ofNullable(matchStorage.findMatch(matchId))
                         .orElseThrow(() ->new MatchNotFoundException("No match found with ID: "+matchId));
         if(! match.isLive()) {
@@ -60,7 +65,12 @@ public class Scoreboard implements MatchOperations {
         }
 
         match.setLive(false); // Set the match as finished
-        matchStorage.saveMatch(match); // Save the updated match state
+
+        try {
+            matchStorage.saveMatch(match); // Save the updated match state
+        }catch (Exception e) {
+            throw new MatchUpdateException("Failed to update the match status", e);
+        }
     }
 
     @Override
