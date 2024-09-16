@@ -17,7 +17,7 @@ public class Scoreboard implements MatchOperations {
 
     @Override
     public void startMatch(String homeTeam, String awayTeam) {
-        Match match = new Match(homeTeam, awayTeam, 0, 0); // Create a new match with 0-0 score
+        Match match = createNewMatch(homeTeam, awayTeam);
         matchStorage.saveMatch(match); // Save the match to the storage
     }
 
@@ -39,5 +39,10 @@ public class Scoreboard implements MatchOperations {
     @Override
     public List<Match> getMatchSummary() {
         return null;
+    }
+
+    private Match createNewMatch(String homeTeam, String awayTeam) {
+        return new Match(homeTeam, awayTeam, 0, 0); // Create a new match with 0-0 score
+
     }
 }
