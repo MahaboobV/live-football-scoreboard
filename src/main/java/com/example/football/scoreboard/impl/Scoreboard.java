@@ -35,13 +35,17 @@ public class Scoreboard implements MatchOperations {
     }
 
     @Override
-    public void updateMatchScore(String matchId, int scoreA, int scoreB) {
+    public void updateMatchScore(String matchId, int homeTeamScore, int awayTeamScore) {
+
+        if (homeTeamScore < 0 || awayTeamScore < 0) {
+            throw new IllegalArgumentException("Score cannot be negative");
+        }
 
         Match match = Optional.ofNullable(matchStorage.findMatch(matchId))
                        .orElseThrow(() -> new MatchNotFoundException("No match found with ID: "+matchId));
 
-        match.setHomeTeamScore(scoreA);
-        match.setAwayTeamScore(scoreB);
+        match.setHomeTeamScore(homeTeamScore);
+        match.setAwayTeamScore(awayTeamScore);
 
         matchStorage.saveMatch(match);
     }

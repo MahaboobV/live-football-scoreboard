@@ -140,4 +140,15 @@ public class ScoreboardTest {
         MatchNotFoundException exception = assertThrows(MatchNotFoundException.class, () -> scoreboard.updateMatchScore(matchId, 2, 1));
         assertEquals("No match found with ID: InvalidMatchId", exception.getMessage());
     }
+
+    @Test
+    void testUpdateMatchScore_NegativeScore() {
+
+        // Arrange
+        String matchId = "matchId1";
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> scoreboard.updateMatchScore(matchId, 1, -1));
+        assertEquals("Score cannot be negative", exception.getMessage());
+    }
 }
