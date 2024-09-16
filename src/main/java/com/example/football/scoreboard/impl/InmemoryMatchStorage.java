@@ -2,31 +2,32 @@ package com.example.football.scoreboard.impl;
 
 import com.example.football.scoreboard.Match;
 import com.example.football.scoreboard.MatchStorage;
+import com.example.football.scoreboard.exception.MatchNotFoundException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InmemoryMatchStorage implements MatchStorage {
 
-    private final List<Match> matches = new ArrayList<>();
+    private final Map<String, Match> matchMap = new HashMap<>();
 
     @Override
     public void saveMatch(Match match) {
-
+        matchMap.put(match.getMatchId(), match);
     }
 
     @Override
     public Match findMatch(String matchId) {
-        return null;
-    }
+        Match match = matchMap.get(matchId);
 
-    @Override
-    public void removeMatch(Match match) {
-
+        if(match ==  null) {
+            throw new MatchNotFoundException("No match found with ID: "+matchId);
+        }
+        return match;
     }
 
     @Override
     public List<Match> getAllMatches() {
-        return null;
+        return Collections.unmodifiableList(new ArrayList<>(matchMap.values()));
     }
 }

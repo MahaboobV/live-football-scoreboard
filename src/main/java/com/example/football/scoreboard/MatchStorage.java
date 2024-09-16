@@ -8,7 +8,5 @@ public interface MatchStorage {
 
     Match findMatch(String matchId);
 
-    void removeMatch(Match match);
-
     List<Match> getAllMatches();
 }
