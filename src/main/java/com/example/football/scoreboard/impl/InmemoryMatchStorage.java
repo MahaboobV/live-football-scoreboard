@@ -4,8 +4,10 @@ import com.example.football.scoreboard.Match;
 import com.example.football.scoreboard.MatchStorage;
 import com.example.football.scoreboard.exception.MatchNotFoundException;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class InmemoryMatchStorage implements MatchStorage {
 
@@ -13,11 +15,17 @@ public class InmemoryMatchStorage implements MatchStorage {
 
     @Override
     public void saveMatch(Match match) {
+        if(match == null || match.getMatchId() == null) {
+            throw new IllegalArgumentException("Match or Match Id cannot be null");
+        }
         matchMap.put(match.getMatchId(), match);
     }
 
     @Override
     public Match findMatch(String matchId) {
+        if(matchId == null || matchId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Match ID cannot be null or empty");
+        }
         Match match = matchMap.get(matchId);
 
         if(match ==  null) {
@@ -28,6 +36,6 @@ public class InmemoryMatchStorage implements MatchStorage {
 
     @Override
     public List<Match> getAllMatches() {
-        return Collections.unmodifiableList(new ArrayList<>(matchMap.values()));
+        return List.copyOf(matchMap.values());
     }
 }

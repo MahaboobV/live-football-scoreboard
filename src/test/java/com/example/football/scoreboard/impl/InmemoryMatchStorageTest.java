@@ -45,6 +45,27 @@ public class InmemoryMatchStorageTest {
     }
 
     @Test
+    void testFindMatchById_NullOrEmptyId() {
+        // Act & Assert
+        IllegalArgumentException nullException = assertThrows(IllegalArgumentException.class, () -> matchStorage.findMatch(null));
+
+        // Assert the exception message
+        assertEquals("Match ID cannot be null or empty", nullException.getMessage());
+
+        // Act & Assert
+        IllegalArgumentException emptyException = assertThrows(IllegalArgumentException.class, () -> matchStorage.findMatch(""));
+
+        // Assert the exception message
+        assertEquals("Match ID cannot be null or empty", emptyException.getMessage());
+
+        // Act & Assert
+        IllegalArgumentException spaceException = assertThrows(IllegalArgumentException.class, () -> matchStorage.findMatch(" "));
+
+        // Assert the exception message
+        assertEquals("Match ID cannot be null or empty", spaceException.getMessage());
+    }
+
+    @Test
     void testSaveAndFindMatch() {
         // Arrange
         String homeTeam = "Team A";
@@ -64,6 +85,14 @@ public class InmemoryMatchStorageTest {
         assertEquals(match.getHomeTeam(), foundMatch.getHomeTeam());
         assertEquals(match.getAwayTeam(), foundMatch.getAwayTeam());
         assertEquals(match.getTotalScore(), foundMatch.getTotalScore());
+    }
+
+    @Test
+    void testSaveMatch_Null() {
+        // Ac
+        IllegalArgumentException nullException = assertThrows(IllegalArgumentException.class, () -> matchStorage.saveMatch(null));
+        // Assert the exception message
+        assertEquals("Match or Match Id cannot be null", nullException.getMessage());
     }
 
     @Test
