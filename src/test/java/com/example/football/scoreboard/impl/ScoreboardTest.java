@@ -12,9 +12,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -234,7 +238,7 @@ public class ScoreboardTest {
         LocalDateTime now = LocalDateTime.now();
 
         Match liveMatch = new Match(homeTeam, awayTeam, 2, 1, now);
-        liveMatch.setLive(true); // The match is already finished
+        liveMatch.setLive(true);
 
         when(matchStorage.findMatch(matchId)).thenReturn(liveMatch);
         doThrow(new RuntimeException("Database error")).when(matchStorage).saveMatch(liveMatch);
@@ -243,5 +247,79 @@ public class ScoreboardTest {
         MatchUpdateException exception = assertThrows(MatchUpdateException.class, () -> scoreboard.finishMatch(matchId));
 
         assertEquals("Failed to update the match status", exception.getMessage());
+    }
+
+    @Test
+    void testGetMatchSummary_EmptyScoreboard() {
+        // Arrnage
+        when(matchStorage.getAllMatches()).thenReturn(Collections.emptyList()); // Set as no live matches
+
+        // Act
+        List<String> matchSummary = scoreboard.getMatchSummary();
+
+        // Assert
+        assertTrue(matchSummary.isEmpty(), "Expected an empty list when there are no live matches");
+    }
+
+    @Test
+    void testGetMatchSummary_SingleLiveMatch() {
+        // Arrange
+        String homeTeam = "Uruguay";
+        String awayTeam = "Italy";
+        LocalDateTime now = LocalDateTime.now();
+        Match liveMatch = new Match(homeTeam, awayTeam, 2, 1, now);
+        liveMatch.setLive(true);
+
+        when(matchStorage.getAllMatches()).thenReturn(Collections.singletonList(liveMatch)); // only one live match
+
+        // Act
+        List<String> matchSummary = scoreboard.getMatchSummary();
+
+        assertEquals(1, matchSummary.size());
+        assertEquals("1. Uruguay 2 - Italy 1", matchSummary.get(0));
+    }
+
+    @Test
+    void testGetMatchSummary_SortedByTotalScore() {
+        // Arrange
+        Match liveMatch3 = new Match("Uruguay", "Italy", 1, 1, LocalDateTime.now().minusMinutes(10));
+        liveMatch3.setLive(true);
+
+        Match liveMatch2 = new Match("Spain", "Brazil", 2, 3, LocalDateTime.now().minusMinutes(5));
+        liveMatch2.setLive(true);
+
+        Match liveMatch1 = new Match("Mexico", "Canada", 3, 4, LocalDateTime.now().minusMinutes(2));
+        liveMatch1.setLive(true);
+
+        when(matchStorage.getAllMatches()).thenReturn(List.of(liveMatch1, liveMatch2, liveMatch3));
+
+        List<String> matchSummary = scoreboard.getMatchSummary();
+
+        assertEquals(3, matchSummary.size());
+        assertEquals("1. Mexico 3 - Canada 4", matchSummary.get(0)); //Match3 should come first (highest total score)
+        assertEquals("2. Spain 2 - Brazil 3", matchSummary.get(1));
+        assertEquals("3. Uruguay 1 - Italy 1", matchSummary.get(2));
+    }
+
+    @Test
+    void testGetMatchSummary_SortedByStartTime() {
+        // Arrange
+        Match liveMatch3 = new Match("Uruguay", "Italy", 2, 2, LocalDateTime.now().minusMinutes(10));
+        liveMatch3.setLive(true);
+
+        Match liveMatch2 = new Match("Mexico", "Canada", 2, 2, LocalDateTime.now().minusMinutes(3));
+        liveMatch2.setLive(true);
+
+        Match liveMatch1 = new Match("Spain", "Brazil", 2, 2, LocalDateTime.now()); // recent match
+        liveMatch1.setLive(true);
+
+        when(matchStorage.getAllMatches()).thenReturn(List.of(liveMatch1, liveMatch2, liveMatch3));
+
+        List<String> matchSummary = scoreboard.getMatchSummary();
+
+        assertEquals(3, matchSummary.size());
+        assertEquals("1. Spain 2 - Brazil 2", matchSummary.get(0)); //Match3 should come first (highest total score)
+        assertEquals("2. Mexico 2 - Canada 2", matchSummary.get(1));
+        assertEquals("3. Uruguay 2 - Italy 2", matchSummary.get(2));
     }
 }
