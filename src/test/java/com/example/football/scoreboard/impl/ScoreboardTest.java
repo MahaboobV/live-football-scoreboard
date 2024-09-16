@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 
@@ -25,6 +27,7 @@ public class ScoreboardTest {
     void testStartMatch() {
         String homeTeam = "Team A";
         String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
 
         // Act
         scoreboard.startMatch(homeTeam, awayTeam);
@@ -32,9 +35,13 @@ public class ScoreboardTest {
         // Assert
         verify(matchStorage).saveMatch(argThat(match ->
                 match.getHomeTeam().equals(homeTeam) &&
-                        match.getAwayTeam().equals(awayTeam) &&
-                        match.getHomeTeamScore() == 0 &&
-                        match.getAwayTeamScore() == 0));
+                match.getAwayTeam().equals(awayTeam) &&
+                match.getHomeTeamScore() == 0 &&
+                match.getAwayTeamScore() == 0 &&
+                match.getStartTime().isAfter(now.minusSeconds(1)) &&
+                match.getStartTime().isBefore(now.plusSeconds(1)) &&
+                match.isLive()
+        ));
 
     }
 }
