@@ -7,6 +7,7 @@ import com.example.football.scoreboard.exception.MatchNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class Scoreboard implements MatchOperations {
 
@@ -29,11 +30,8 @@ public class Scoreboard implements MatchOperations {
         if (matchId == null || matchId.trim().isEmpty()) {
             throw new IllegalArgumentException("Match ID cannot be null or empty");
         }
-        Match match = matchStorage.findMatch(matchId);
-        if(match == null) {
-            throw new MatchNotFoundException("No match found with ID: "+matchId);
-        }
-        return match;
+        return Optional.ofNullable(matchStorage.findMatch(matchId))
+                .orElseThrow(() -> new MatchNotFoundException("No match found with ID: "+matchId));
     }
 
     @Override
