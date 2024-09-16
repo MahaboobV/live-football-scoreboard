@@ -1,8 +1,10 @@
 package com.example.football.scoreboard;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Match {
+    private final String matchId;
 
     private final String homeTeam;
 
@@ -19,12 +21,17 @@ public class Match {
     private int totalScore;
 
     public Match(String homeTeam, String awayTeam, int homeTeamScore, int awayTeamScore, LocalDateTime startTime) {
+        this.matchId = UUID.randomUUID().toString();
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.homeTeamScore = homeTeamScore;
         this.awayTeamScore = awayTeamScore;
         this.startTime = startTime;
         this.isLive = false; // Default value
+    }
+
+    public String getMatchId() {
+        return matchId;
     }
 
     public String getHomeTeam() {
