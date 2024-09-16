@@ -78,22 +78,39 @@ public class Scoreboard implements MatchOperations {
 
     @Override
     public List<String> getMatchSummary() {
-        List<Match> liveMatches = matchStorage.getAllMatches();
+        // Retrieve and filter live matches
+        List<Match> liveMatches = getLiveMatches();
 
-        List<Match> sortedMatches =  liveMatches.stream()
+        // Sort the matches by total score and start time
+        List<Match> sortedMatches =  sortMatches(liveMatches);
+
+        // format tthe sorted matches into desired summary format
+        return formattedMacthes(sortedMatches);
+    }
+
+    private List<Match> getLiveMatches() {
+        return matchStorage.getAllMatches().stream()
+                .filter(Match::isLive).collect(Collectors.toList());
+    }
+
+    private List<Match> sortMatches(List<Match> matches) {
+        return matches.stream()
                 .filter(Match::isLive)
                 .sorted(Comparator.comparingInt(Match::getTotalScore).reversed()
                         .thenComparing(Match::getStartTime, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
+    }
 
-        return IntStream.range(0, sortedMatches.size())
+    private List<String> formattedMacthes(List<Match> matches) {
+        return IntStream.range(0, matches.size())
                 .mapToObj(i-> {
-                    Match match = sortedMatches.get(i);
+                    Match match = matches.get(i);
                     return (i+1) +". "+ match.getHomeTeam() +" "+ match.getHomeTeamScore()+
                             " - "+match.getAwayTeam() +" "+ match.getAwayTeamScore();
 
                 }).collect(Collectors.toList());
     }
+
 
     private Match createNewMatch(String homeTeam, String awayTeam) {
         LocalDateTime now = LocalDateTime.now();
