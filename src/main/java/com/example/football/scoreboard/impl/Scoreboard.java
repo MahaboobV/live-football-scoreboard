@@ -36,14 +36,14 @@ public class Scoreboard implements MatchOperations {
 
         // check if one of the teams involved in already in progress match
         Optional<Match> matchOptional = matchStorage.getAllMatches().stream()
-                .filter(match -> match.getHomeTeam().equals(homeTeam) ||  match.getAwayTeam().equals(homeTeam) ||
-                        match.getHomeTeam().equals(awayTeam) ||  match.getAwayTeam().equals(awayTeam))
+                .filter(match -> isTeamInvolved(match, homeTeam) ||  isTeamInvolved(match, awayTeam))
                 .filter(Match::isLive)
                 .findFirst();
 
-        if(matchOptional.isPresent()) {
-                throw new IllegalStateException("Cannot start the match: a match involving either the home team " + homeTeam + " or the away team " + awayTeam + " is already in progress.");
-        }
+        matchOptional.ifPresent(match ->{
+            throw new IllegalStateException("Cannot start the match: a match involving either the home team " + homeTeam + " or the away team " + awayTeam + " is already in progress.");
+        });
+
         Match match = createNewMatch(homeTeam, awayTeam);
         match.setLive(true);
         matchStorage.saveMatch(match);
@@ -147,5 +147,9 @@ public class Scoreboard implements MatchOperations {
         LocalDateTime now = LocalDateTime.now();
         return new Match(homeTeam, awayTeam, 0, 0, now);
 
+    }
+
+    private boolean isTeamInvolved(Match match, String team) {
+        return match.getHomeTeam().equals(team) || match.getAwayTeam().equals(team) ;
     }
 }

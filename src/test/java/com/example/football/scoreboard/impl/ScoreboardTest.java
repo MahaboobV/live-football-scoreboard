@@ -63,6 +63,12 @@ public class ScoreboardTest {
         String awayTeam = "Team B";
         LocalDateTime now = LocalDateTime.now();
 
+        // Mock findMatch to return Null (no match is live between these two teams)
+        when(matchStorage.findMatch(homeTeam, awayTeam)).thenReturn(null);
+
+        // Mock getAllMatches to return empty list
+        when(matchStorage.getAllMatches()).thenReturn(Collections.emptyList());
+
         // Act
         Match match = scoreboard.startMatch(homeTeam, awayTeam);
 
