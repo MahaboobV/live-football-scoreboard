@@ -174,6 +174,27 @@ public class ScoreboardTest {
     }
 
     @Test
+    void testGetMatchByTeamNames_Valid() {
+        // Arrange
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
+
+        Match match = new Match(homeTeam, awayTeam, 1 ,  1, now);
+
+        when(matchStorage.findMatch(homeTeam, awayTeam)).thenReturn(match);
+
+        // Act
+        Match retrievedMatch = scoreboard.getMatch(homeTeam, awayTeam);
+
+        // Assert
+        assertEquals(homeTeam, retrievedMatch.getHomeTeam());
+        assertEquals(awayTeam, retrievedMatch.getAwayTeam());
+        assertEquals(1, retrievedMatch.getHomeTeamScore());
+        assertEquals(1, retrievedMatch.getAwayTeamScore());
+    }
+
+    @Test
     void testUpdateMatchScore_ValidMatch() {
         // Arrange
         String matchId = "match1";

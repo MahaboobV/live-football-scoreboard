@@ -66,6 +66,30 @@ public class InmemoryMatchStorageTest {
     }
 
     @Test
+    void testFindMatch_UsingTeamNames() {
+        // Arrange
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
+
+        Match match = new Match(homeTeam, awayTeam, 0, 0, now);
+        match.setLive(true);
+
+        // Act
+        matchStorage.saveMatch(match);
+
+        // Act
+        Match foundMatch = matchStorage.findMatch(homeTeam, awayTeam);
+
+        // Assert
+        assertNotNull(foundMatch);
+        assertEquals(match.getMatchId(), foundMatch.getMatchId());
+        assertEquals(match.getHomeTeam(), foundMatch.getHomeTeam());
+        assertEquals(match.getAwayTeam(), foundMatch.getAwayTeam());
+        assertEquals(match.getTotalScore(), foundMatch.getTotalScore());
+    }
+
+    @Test
     void testSaveAndFindMatch() {
         // Arrange
         String homeTeam = "Team A";
