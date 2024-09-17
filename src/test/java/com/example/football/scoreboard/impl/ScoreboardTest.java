@@ -195,6 +195,27 @@ public class ScoreboardTest {
     }
 
     @Test
+    void testGteMatchByTeamName_NullOrEmptyTeamNames() {
+        // Act
+        IllegalArgumentException nullException = assertThrows(IllegalArgumentException.class, () -> scoreboard.getMatch(null, "Team B"));
+
+        // Assert the exception message
+        assertEquals("Home and Away Teams must not be null or empty", nullException.getMessage());
+
+        // Act
+        IllegalArgumentException emptyException = assertThrows(IllegalArgumentException.class, () -> scoreboard.getMatch("", "Team B"));
+
+        // Assert the exception message
+        assertEquals("Home and Away Teams must not be null or empty", emptyException.getMessage());
+
+        // Act
+        IllegalArgumentException spaceException = assertThrows(IllegalArgumentException.class, () -> scoreboard.getMatch("Team A", " "));
+
+        // Assert the exception message
+        assertEquals("Home and Away Teams must not be null or empty", spaceException.getMessage());
+    }
+
+    @Test
     void testUpdateMatchScore_ValidMatch() {
         // Arrange
         String matchId = "match1";

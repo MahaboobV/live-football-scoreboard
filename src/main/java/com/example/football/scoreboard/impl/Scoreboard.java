@@ -48,9 +48,12 @@ public class Scoreboard implements MatchOperations {
 
     @Override
     public Match getMatch(String homeTeam, String awayTeam) {
+        //Validate input
+        if(homeTeam == null || homeTeam.trim().isEmpty() || awayTeam == null || awayTeam.trim().isEmpty()) {
+            throw new IllegalArgumentException("Home and Away Teams must not be null or empty");
+        }
         return Optional.ofNullable(matchStorage.findMatch(homeTeam, awayTeam))
                 .orElseThrow(() -> new MatchNotFoundException("No match found with Home Team: "+homeTeam +" Away Team: "+ awayTeam));
-
     }
 
     @Override
