@@ -47,6 +47,13 @@ public class Scoreboard implements MatchOperations {
     }
 
     @Override
+    public Match getMatch(String homeTeam, String awayTeam) {
+        return Optional.ofNullable(matchStorage.findMatch(homeTeam, awayTeam))
+                .orElseThrow(() -> new MatchNotFoundException("No match found with Home Team: "+homeTeam +" Away Team: "+ awayTeam));
+
+    }
+
+    @Override
     public void updateMatchScore(String matchId, int homeTeamScore, int awayTeamScore) {
 
         if (homeTeamScore < 0 || awayTeamScore < 0) {

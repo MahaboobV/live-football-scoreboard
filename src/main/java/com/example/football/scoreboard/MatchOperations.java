@@ -8,6 +8,8 @@ public interface MatchOperations {
 
     Match getMatch(String matchId);
 
+    Match getMatch(String homeTeam, String awayTeam);
+
     void updateMatchScore(String matchId, int scoreA, int scoreB);
 
     void finishMatch(String matchId);
