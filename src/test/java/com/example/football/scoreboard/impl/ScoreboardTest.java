@@ -15,10 +15,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,7 +54,46 @@ public class ScoreboardTest {
                 match.getStartTime().isBefore(now.plusSeconds(1)) &&
                 match.isLive()
         ));
+    }
 
+    @Test
+    void testStartMatch_ReturnSavedMatch() {
+        // Arrange
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
+
+        // Act
+        Match match = scoreboard.startMatch(homeTeam, awayTeam);
+
+        // Assert
+        assertNotNull(match);
+        assertEquals("Team A", match.getHomeTeam());
+        assertEquals("Team B", match.getAwayTeam());
+        assertTrue(match.isLive());
+
+    }
+    @Test
+    void testStartMatch_AlreadyLive() {
+
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+
+        Match match = new Match(homeTeam, awayTeam, 0 , 0, LocalDateTime.now());
+
+        when(matchStorage.findMatch(homeTeam, awayTeam)).thenReturn(null).thenReturn(match);
+
+        // Act
+        Match firstMatch = scoreboard.startMatch(homeTeam, awayTeam);
+
+        // Assert
+        assertNotNull(firstMatch);
+
+        // Act
+        IllegalStateException stateException = assertThrows(IllegalStateException.class, () -> scoreboard.startMatch(homeTeam, awayTeam));
+
+        // Assert the exception message
+        assertEquals("A match between these two teams is already in progress.", stateException.getMessage());
     }
 
     @Test
