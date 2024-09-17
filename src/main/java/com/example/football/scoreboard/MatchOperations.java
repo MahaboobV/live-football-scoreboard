@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface MatchOperations {
 
-    void startMatch(String homeTeam, String awayTeam);
+    Match startMatch(String homeTeam, String awayTeam);
 
     Match getMatch(String matchId);
 

@@ -35,6 +35,16 @@ public class InmemoryMatchStorage implements MatchStorage {
     }
 
     @Override
+    public Match findMatch(String homeTeam, String awayTeam) {
+        return matchMap.values().stream()
+                .filter(match -> match.getHomeTeam().equals(homeTeam) &&
+                        match.getAwayTeam().equals(awayTeam) &&
+                        match.isLive())
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
     public List<Match> getAllMatches() {
         return List.copyOf(matchMap.values());
     }

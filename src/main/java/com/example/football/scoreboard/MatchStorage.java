@@ -8,5 +8,7 @@ public interface MatchStorage {
 
     Match findMatch(String matchId);
 
+    Match findMatch(String homeTeam, String awayTeam);
+
     List<Match> getAllMatches();
 }
