@@ -117,6 +117,30 @@ public class ScoreboardTest {
     }
 
     @Test
+    void testStartMatch_OneOfTheTeamsMatchisLive() {
+
+        // Arrange
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+
+        Match match = new Match(homeTeam, awayTeam, 0 , 0, LocalDateTime.now());
+        match.setLive(true);
+
+        // Mock findMatch to return Null (no match is live between these two teams)
+        when(matchStorage.findMatch(homeTeam, awayTeam)).thenReturn(null);
+
+        // Mock getAllMatches to return list of Match (simulating one match is ongoing with either of the team is part of)
+        when(matchStorage.getAllMatches()).thenReturn(Collections.singletonList(match));
+
+
+        // Act
+        IllegalStateException stateException = assertThrows(IllegalStateException.class, () -> scoreboard.startMatch(homeTeam, awayTeam));
+
+        // Assert the exception message
+        assertEquals("Cannot start the match: a match involving either the home team " + homeTeam + " or the away team " + awayTeam + " is already in progress.", stateException.getMessage());
+    }
+
+    @Test
     void testGetMatchById_ValidId() {
         // Arrange
         String matchId = "match1";
