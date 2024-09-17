@@ -82,7 +82,6 @@ public class ScoreboardTest {
         Match match = new Match(homeTeam, awayTeam, 0 , 0, LocalDateTime.now());
 
         when(matchStorage.findMatch(homeTeam, awayTeam)).thenReturn(null).thenReturn(match);
-
         // Act
         Match firstMatch = scoreboard.startMatch(homeTeam, awayTeam);
 
@@ -94,6 +93,27 @@ public class ScoreboardTest {
 
         // Assert the exception message
         assertEquals("A match between these two teams is already in progress.", stateException.getMessage());
+    }
+
+    @Test
+    void testStartMatch_NullOrEmptyTeams() {
+        // Act
+        IllegalArgumentException nullException = assertThrows(IllegalArgumentException.class, () -> scoreboard.startMatch(null, "Team B"));
+
+        // Assert the exception message
+        assertEquals("Home and Away Teams must not be null or empty", nullException.getMessage());
+
+        // Act
+        IllegalArgumentException emptyException = assertThrows(IllegalArgumentException.class, () -> scoreboard.startMatch("", "Team B"));
+
+        // Assert the exception message
+        assertEquals("Home and Away Teams must not be null or empty", emptyException.getMessage());
+
+        // Act
+        IllegalArgumentException spaceException = assertThrows(IllegalArgumentException.class, () -> scoreboard.startMatch("Team A", " "));
+
+        // Assert the exception message
+        assertEquals("Home and Away Teams must not be null or empty", spaceException.getMessage());
     }
 
     @Test

@@ -24,6 +24,10 @@ public class Scoreboard implements MatchOperations {
     // Create a new match, sets it as live, and saves it to storage
     @Override
     public Match startMatch(String homeTeam, String awayTeam) {
+        //Validate input
+        if(homeTeam == null || homeTeam.trim().isEmpty() || awayTeam == null || awayTeam.trim().isEmpty()) {
+            throw new IllegalArgumentException("Home and Away Teams must not be null or empty");
+        }
         if(matchStorage.findMatch(homeTeam, awayTeam) != null) {
             throw new IllegalStateException("A match between these two teams is already in progress.");
         }
