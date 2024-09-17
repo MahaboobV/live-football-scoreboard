@@ -28,8 +28,21 @@ public class Scoreboard implements MatchOperations {
         if(homeTeam == null || homeTeam.trim().isEmpty() || awayTeam == null || awayTeam.trim().isEmpty()) {
             throw new IllegalArgumentException("Home and Away Teams must not be null or empty");
         }
+
+        // Check the same combination match is already in progress
         if(matchStorage.findMatch(homeTeam, awayTeam) != null) {
             throw new IllegalStateException("A match between these two teams is already in progress.");
+        }
+
+        // check if one of the teams involved in already in progress match
+        Optional<Match> matchOptional = matchStorage.getAllMatches().stream()
+                .filter(match -> match.getHomeTeam().equals(homeTeam) ||  match.getAwayTeam().equals(homeTeam) ||
+                        match.getHomeTeam().equals(awayTeam) ||  match.getAwayTeam().equals(awayTeam))
+                .filter(Match::isLive)
+                .findFirst();
+
+        if(matchOptional.isPresent()) {
+                throw new IllegalStateException("Cannot start the match: a match involving either the home team " + homeTeam + " or the away team " + awayTeam + " is already in progress.");
         }
         Match match = createNewMatch(homeTeam, awayTeam);
         match.setLive(true);
