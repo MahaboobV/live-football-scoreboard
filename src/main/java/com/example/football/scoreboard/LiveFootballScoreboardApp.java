@@ -112,7 +112,18 @@ public class LiveFootballScoreboardApp {
     }
 
     private void finishMatch(InputWrapper inputWrapper, Scoreboard scoreboard) {
+        System.out.println("\n Select an option:");
+        System.out.println("1. Using Match ID :");
+        System.out.println("2. Using Team Names :");
 
+        int selection = inputWrapper.nextInt();
+        inputWrapper.nextLine();
+
+        switch (selection) {
+            case 1 -> finishMatchByMatchId(inputWrapper, scoreboard);
+            case 2 -> finishMatchByTeamNames(inputWrapper, scoreboard);
+            default -> System.out.println("Invalid choice, please choose the right option !");
+        }
     }
 
     private void viewLiveMatchSummary(InputWrapper inputWrapper, Scoreboard scoreboard) {
@@ -202,10 +213,27 @@ public class LiveFootballScoreboardApp {
     }
 
     private void finishMatchByMatchId(InputWrapper inputWrapper, Scoreboard scoreboard) {
+        String matchId = getInput("Enter Match ID to finish the match:", inputWrapper);
 
+        try {
+            scoreboard.finishMatch(matchId);
+            System.out.println("Match with Match ID: " + matchId + " has been finished");
+        } catch (IllegalArgumentException | MatchNotFoundException e) {
+            System.out.println("Error :" + e.getMessage());
+        }
     }
 
     private void finishMatchByTeamNames(InputWrapper inputWrapper, Scoreboard scoreboard) {
+        String homeTeamName = getInput("Enter Home Team Name :", inputWrapper);
+        String awayTeamName = getInput("Enter Away Team Name :", inputWrapper);
 
+        try {
+            Match match = scoreboard.getMatch(homeTeamName, awayTeamName);
+            scoreboard.finishMatch(match.getMatchId());
+            System.out.println("Match with Match ID: " + match.getMatchId() + " has been finished");
+
+        } catch (IllegalArgumentException | MatchNotFoundException e) {
+            System.out.println("Error :" + e.getMessage());
+        }
     }
 }
