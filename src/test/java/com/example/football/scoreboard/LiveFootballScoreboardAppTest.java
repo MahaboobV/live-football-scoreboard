@@ -46,4 +46,22 @@ public class LiveFootballScoreboardAppTest {
         verify(mockScoreboard).startMatch("Team A", "Team B");
 
     }
+
+    @Test
+    void testUpdatetMatchScore() {
+        Match match = new Match("Team A", "Team B", 0, 0 , LocalDateTime.now());
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(3).thenReturn(3).thenReturn(5);
+        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn(match.getMatchId()).thenReturn("");
+        doNothing().when(mockScoreboard).updateMatchScore(match.getMatchId(), 3,3);
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).updateMatchScore(match.getMatchId(), 3,3);
+
+    }
+
 }
