@@ -10,9 +10,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
@@ -31,8 +35,11 @@ public class LiveFootballScoreboardAppTest {
 
     private LiveFootballScoreboardApp liveFootballScoreboardApp;
 
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+
     @BeforeEach
     void setUp() {
+        System.setOut(new PrintStream(outContent));
         liveFootballScoreboardApp = new LiveFootballScoreboardApp(mockInputWrapper, mockScoreboard);
     }
 
@@ -205,6 +212,78 @@ public class LiveFootballScoreboardAppTest {
 
     }
 
+
+    @Test
+    void testFinishMatch_WithEmptyMatchId() {
+        String matchId = "";
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(3)
+                .thenReturn(1)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(matchId)
+                .thenReturn("");
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard, never()).finishMatch(matchId);
+
+    }
+
+    @Test
+    void testFinishMatch_WithNonExistMatchId() {
+        String nonExistentMatchId = "12345";
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(3)
+                .thenReturn(1)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(nonExistentMatchId)
+                .thenReturn("");
+
+        doThrow(new MatchNotFoundException("Match not found")).when(mockScoreboard).finishMatch(nonExistentMatchId);
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).finishMatch(nonExistentMatchId);
+        assertTrue(outContent.toString().contains("Error: Match not found with Match ID: 12345"));
+    }
+
+    @Test
+    void testFinishMatch_MatchAlreadyFinishedId() {
+        String matchId = "matchId12345";
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(3)
+                .thenReturn(1)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(matchId)
+                .thenReturn("");
+
+        doThrow(new IllegalStateException("Match already finished")).when(mockScoreboard).finishMatch(matchId);
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).finishMatch(matchId);
+        assertTrue(outContent.toString().contains("Error: Match already finished"));
+
+    }
+
     @Test
     void testFinishMatch_ByMatchId() {
         String matchId = UUID.randomUUID().toString();
@@ -227,6 +306,56 @@ public class LiveFootballScoreboardAppTest {
         // Assert
         verify(mockScoreboard).finishMatch(matchId);
 
+    }
+
+    @Test
+    void testFinishMatch_ByTeamNamesEmpty() {
+        String homeTeam = "";
+        String awayTeam = "Team B";
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(3)
+                .thenReturn(2)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(homeTeam)
+                .thenReturn(awayTeam)
+                .thenReturn("");
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard, never()).getMatch(homeTeam, awayTeam);
+        verify(mockScoreboard, never()).finishMatch(anyString());
+        assertTrue(outContent.toString().contains("Error: Team names cannot be empty."));
+    }
+
+    @Test
+    void testFinishMatch_BySameTeamNames() {
+        String homeTeam = "Team A";
+        String awayTeam = "Team A";
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(3)
+                .thenReturn(2)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(homeTeam)
+                .thenReturn(awayTeam)
+                .thenReturn("");
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard, never()).getMatch(homeTeam, awayTeam);
+        verify(mockScoreboard, never()).finishMatch(anyString());
+        assertTrue(outContent.toString().contains("Error: Home and Away Teams must be different."));
     }
 
     @Test
@@ -256,7 +385,5 @@ public class LiveFootballScoreboardAppTest {
         // Assert
         verify(mockScoreboard).getMatch(homeTeam, awayTeam);
         verify(mockScoreboard).finishMatch(match.getMatchId());
-
     }
-
 }

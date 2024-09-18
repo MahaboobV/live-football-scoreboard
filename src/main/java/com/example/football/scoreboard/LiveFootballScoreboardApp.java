@@ -215,9 +215,14 @@ public class LiveFootballScoreboardApp {
     private void finishMatchByMatchId(InputWrapper inputWrapper, Scoreboard scoreboard) {
         String matchId = getInput("Enter Match ID to finish the match:", inputWrapper);
 
+        if (matchId == null || matchId.trim().isEmpty()) {
+            System.out.println("Error: Match ID cannot be empty.");
+            return;
+        }
+
+        // Finish the match and handle errors
         try {
-            scoreboard.finishMatch(matchId);
-            System.out.println("Match with Match ID: " + matchId + " has been finished");
+            finishMatchAndHandleErrors(matchId, scoreboard);
         } catch (IllegalArgumentException | MatchNotFoundException e) {
             System.out.println("Error :" + e.getMessage());
         }
@@ -227,13 +232,34 @@ public class LiveFootballScoreboardApp {
         String homeTeamName = getInput("Enter Home Team Name :", inputWrapper);
         String awayTeamName = getInput("Enter Away Team Name :", inputWrapper);
 
+        // Edge Case: Empty team names
+        if (homeTeamName.trim().isEmpty() || awayTeamName.trim().isEmpty()) {
+            System.out.println("Error: Team names cannot be empty.");
+            return;
+        }
+
+        // Edge Case: Same team names for both home and away
+        if (homeTeamName.equalsIgnoreCase(awayTeamName)) {
+            System.out.println("Error: Home and Away Teams must be different.");
+            return;
+        }
+
         try {
             Match match = scoreboard.getMatch(homeTeamName, awayTeamName);
-            scoreboard.finishMatch(match.getMatchId());
-            System.out.println("Match with Match ID: " + match.getMatchId() + " has been finished");
-
+            finishMatchAndHandleErrors(match.getMatchId(), scoreboard);
         } catch (IllegalArgumentException | MatchNotFoundException e) {
             System.out.println("Error :" + e.getMessage());
+        }
+    }
+
+    private void finishMatchAndHandleErrors(String matchId, Scoreboard scoreboard) {
+        try {
+            scoreboard.finishMatch(matchId);
+            System.out.println("Match with Match ID: " + matchId + " has been finished");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (MatchNotFoundException e) {
+            System.out.println("Error: Match not found with Match ID: " + matchId);
         }
     }
 }
