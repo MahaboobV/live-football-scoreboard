@@ -3,6 +3,8 @@ package com.example.football.scoreboard;
 import com.example.football.scoreboard.impl.InmemoryMatchStorage;
 import com.example.football.scoreboard.impl.Scoreboard;
 import com.example.football.scoreboard.model.InputWrapper;
+import com.example.football.scoreboard.model.Match;
+
 import java.util.Scanner;
 
 public class LiveFootballScoreboardApp {
@@ -62,7 +64,20 @@ public class LiveFootballScoreboardApp {
         System.out.println("5. Exit");
     }
     private void startMatch(InputWrapper inputWrapper, Scoreboard scoreboard) {
+        System.out.println("Enter Home Team :");
+        String homeTeam = inputWrapper.nextLine();
 
+        System.out.println("Enter Away Team :");
+        String awayTeam = inputWrapper.nextLine();
+        try {
+            Match match = scoreboard.startMatch(homeTeam, awayTeam);
+            if(match != null) {
+                System.out.println("Match started successfully : "+ homeTeam+ " vs "+awayTeam);
+                System.out.println("Match Id : "+match.getMatchId());
+            }
+        }catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error :" + e.getMessage());
+        }
     }
 
     private void updateMatchScore(InputWrapper inputWrapper, Scoreboard scoreboard) {
