@@ -122,13 +122,9 @@ public class LiveFootballScoreboardApp {
         System.out.println("Enter Match ID :");
         String matchId = inputWrapper.nextLine();
 
-        System.out.println("Enter Home Team Score:");
-        int homeTeamScore = inputWrapper.nextInt();
-
-        System.out.println("Enter Away Team Score:");
-        int awayTeamScore = inputWrapper.nextInt();
-
-        inputWrapper.nextLine();
+        int[] scores = readScores(inputWrapper);
+        int homeTeamScore = scores[0];
+        int awayTeamScore = scores[1];
 
         try {
             scoreboard.updateMatchScore(matchId, homeTeamScore, awayTeamScore);
@@ -136,6 +132,17 @@ public class LiveFootballScoreboardApp {
         } catch (IllegalArgumentException | MatchNotFoundException e) {
             System.out.println("Error :" + e.getMessage());
         }
+    }
+
+    private int[] readScores(InputWrapper inputWrapper) {
+        System.out.println("Enter Home Team Score:");
+        int homeTeamScore = inputWrapper.nextInt();
+
+        System.out.println("Enter Away Team Score:");
+        int awayTeamScore = inputWrapper.nextInt();
+        inputWrapper.nextLine();
+
+        return new int[]{homeTeamScore, awayTeamScore};
     }
 
     private void updateScoreByTeamNames(InputWrapper inputWrapper, Scoreboard scoreboard) {

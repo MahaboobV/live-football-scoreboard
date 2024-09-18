@@ -1,5 +1,6 @@
 package com.example.football.scoreboard;
 
+import com.example.football.scoreboard.exception.MatchNotFoundException;
 import com.example.football.scoreboard.impl.Scoreboard;
 import com.example.football.scoreboard.model.InputWrapper;
 import com.example.football.scoreboard.model.Match;
@@ -61,6 +62,69 @@ public class LiveFootballScoreboardAppTest {
 
         // Assert
         verify(mockScoreboard).updateMatchScore(match.getMatchId(), 3,3);
+
+    }
+
+    @Test
+    void testUpdateMatchScoreByMatchId_Invalid() {
+        // Arrange
+        String matchId = "invalid-id";
+        int homeTeamScore = 3;
+        int awayTeamScore = 2;
+
+        // Simulate user input
+        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn(matchId).thenReturn(""); // Invalid Match ID
+        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(homeTeamScore).thenReturn(awayTeamScore).thenReturn(5);; // Scores
+
+        // Simulate exception from the scoreboard
+        doThrow(new MatchNotFoundException("Match not found")).when(mockScoreboard).updateMatchScore(matchId, homeTeamScore, awayTeamScore);
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).updateMatchScore(matchId, homeTeamScore, awayTeamScore); // Verify interaction
+
+    }
+
+    @Test
+    void testUpdateMatchScoreByMatchId_IllegalArgumentException() {
+        // Arrange
+        String matchId = "12345";
+        int homeTeamScore = 3;
+        int awayTeamScore = 2;
+
+        // Simulate user input
+        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn(matchId).thenReturn(""); // Invalid Match ID
+        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(homeTeamScore).thenReturn(awayTeamScore).thenReturn(5); // Scores
+
+        // Simulate exception from the scoreboard
+        doThrow(new MatchNotFoundException("Match not found")).when(mockScoreboard).updateMatchScore(matchId, homeTeamScore, awayTeamScore);
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).updateMatchScore(matchId, homeTeamScore, awayTeamScore);
+
+    }
+
+    @Test
+    void testUpdateMatchScoreByMatchId_InvalidOption() {
+        // Arrange
+        String matchId = "12345";
+        int homeTeamScore = 3;
+        int awayTeamScore = 2;
+
+        // Simulate user input
+        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn(matchId).thenReturn("");
+        when(mockInputWrapper.nextInt()).thenReturn(3).thenReturn(5);
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard, never()).updateMatchScore(matchId, homeTeamScore, awayTeamScore);
 
     }
 
