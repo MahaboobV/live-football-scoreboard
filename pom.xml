@@ -47,27 +47,38 @@
     </dependencies>
 
     <build>
-        <testSourceDirectory>src/integration-test/java</testSourceDirectory>
-        <resources>
-            <resource>
-                <directory>src/integration-test/resources</directory>
-            </resource>
-        </resources>
-
         <plugins>
             <!-- Maven Compiler Plugin to set the Java version -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+            <!-- Surefire plugin for unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                <!-- Include tests that follow the naming pattern *Test.java -->
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <!-- Failsafe plugin for integration tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.0.0-M5</version>
+                <configuration>
+                    <!-- Specify the directory for integration tests -->
+                    <testSourceDirectory>src/integration-test/java</testSourceDirectory>
+                 </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -79,5 +90,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
