@@ -128,14 +128,20 @@ public class LiveFootballScoreboardApp {
     }
 
     private void viewLiveMatchSummary(InputWrapper inputWrapper, Scoreboard scoreboard) {
+
         System.out.println("==== Live Match Summary ====");
+        try {
+            List<String> summary = scoreboard.getMatchSummary();
 
-        List<String> summary = scoreboard.getMatchSummary();
-
-        if(summary.isEmpty()){
-            System.out.println("==== No Live matches at the moment ====");
-        }else {
-            summary.forEach(System.out:: println);
+            if (summary == null || summary.isEmpty()) {
+                System.out.println("==== No Live matches at the moment ====");
+            } else {
+                System.out.println("==== Total Live Matches: " + summary.size() + " ====");
+                summary.forEach(System.out::println);
+            }
+        }catch (Exception e) {
+            // Catch any unexpected exceptions that might occur
+            System.out.println("Error: Unable to retrieve match summary.");
         }
     }
 

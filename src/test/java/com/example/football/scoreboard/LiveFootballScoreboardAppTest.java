@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -387,6 +388,39 @@ public class LiveFootballScoreboardAppTest {
         verify(mockScoreboard).getMatch(homeTeam, awayTeam);
         verify(mockScoreboard).finishMatch(match.getMatchId());
     }
+
+    @Test
+    void testGetMatchSummary_WithNoLiveMatches() {
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(4).thenReturn(5);
+        when(mockInputWrapper.nextLine()).thenReturn("");
+
+        when(mockScoreboard.getMatchSummary()).thenReturn(Collections.emptyList());
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).getMatchSummary();
+        assertTrue(outContent.toString().contains("No Live matches at the moment"));
+    }
+
+    @Test
+    void testGetMatchSummary_ExceptionThrown() {
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(4).thenReturn(5);
+        when(mockInputWrapper.nextLine()).thenReturn("");
+
+        doThrow(new RuntimeException("Unexpected Error")).when(mockScoreboard).getMatchSummary();
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).getMatchSummary();
+        assertTrue(outContent.toString().contains("Error: Unable to retrieve match summary"));
+    }
+
 
     @Test
     void testGetMatchSummary() {
