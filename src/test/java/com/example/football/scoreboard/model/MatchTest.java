@@ -1,4 +1,4 @@
-package com.example.football.scoreboard;
+package com.example.football.scoreboard.model;
 
 import org.junit.jupiter.api.Test;
 

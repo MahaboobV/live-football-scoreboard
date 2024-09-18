@@ -1,4 +1,6 @@
-package com.example.football.scoreboard;
+package com.example.football.scoreboard.service;
+
+import com.example.football.scoreboard.model.Match;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.example.football.scoreboard.impl;
 
-import com.example.football.scoreboard.Match;
-import com.example.football.scoreboard.MatchStorage;
+import com.example.football.scoreboard.service.MatchStorage;
+import com.example.football.scoreboard.model.Match;
 import com.example.football.scoreboard.exception.MatchNotFoundException;
 
 import java.util.HashMap;

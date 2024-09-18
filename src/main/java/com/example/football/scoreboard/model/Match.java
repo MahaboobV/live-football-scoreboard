@@ -1,4 +1,4 @@
-package com.example.football.scoreboard;
+package com.example.football.scoreboard.model;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

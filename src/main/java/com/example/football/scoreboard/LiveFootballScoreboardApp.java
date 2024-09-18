@@ -5,6 +5,7 @@ import com.example.football.scoreboard.impl.InmemoryMatchStorage;
 import com.example.football.scoreboard.impl.Scoreboard;
 import com.example.football.scoreboard.model.InputWrapper;
 import com.example.football.scoreboard.model.Match;
+import com.example.football.scoreboard.service.MatchStorage;
 
 import java.util.List;
 import java.util.Objects;
