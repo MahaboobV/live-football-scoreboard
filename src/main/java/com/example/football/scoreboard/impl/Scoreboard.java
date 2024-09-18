@@ -29,6 +29,10 @@ public class Scoreboard implements MatchOperations {
             throw new IllegalArgumentException("Home and Away Teams must not be null or empty");
         }
 
+        // Check Home team and Away team names
+        if(homeTeam.equals(awayTeam)) {
+            throw new IllegalArgumentException("Home and Away Teams must be different.");
+        }
         // Check the same combination match is already in progress
         if(matchStorage.findMatch(homeTeam, awayTeam) != null) {
             throw new IllegalStateException("A match between these two teams is already in progress.");
