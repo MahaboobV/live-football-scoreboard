@@ -47,6 +47,13 @@
     </dependencies>
 
     <build>
+        <testSourceDirectory>src/integration-test/java</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/integration-test/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- Maven Compiler Plugin to set the Java version -->
             <plugin>
@@ -56,6 +63,19 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
