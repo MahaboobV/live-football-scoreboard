@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -203,4 +204,59 @@ public class LiveFootballScoreboardAppTest {
         verify(mockScoreboard, never()).updateMatchScore("matchId", 4,3);
 
     }
+
+    @Test
+    void testFinishMatch_ByMatchId() {
+        String matchId = UUID.randomUUID().toString();
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(3)
+                .thenReturn(1)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(matchId)
+                .thenReturn("");
+
+        doNothing().when(mockScoreboard).finishMatch(matchId);
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).finishMatch(matchId);
+
+    }
+
+    @Test
+    void testFinishMatch_ByTeamNames() {
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+
+        Match match = new Match(homeTeam, awayTeam, 0, 0, LocalDateTime.now());
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(3)
+                .thenReturn(2)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(homeTeam)
+                .thenReturn(awayTeam)
+                .thenReturn("");
+
+        when(mockScoreboard.getMatch(homeTeam, awayTeam)).thenReturn(match);
+        doNothing().when(mockScoreboard).finishMatch(match.getMatchId());
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).getMatch(homeTeam, awayTeam);
+        verify(mockScoreboard).finishMatch(match.getMatchId());
+
+    }
+
 }
