@@ -147,6 +147,16 @@ public class ScoreboardTest {
     }
 
     @Test
+    void testStartMatchWithSameTeamNamess() {
+        // Act
+        IllegalArgumentException argumentException = assertThrows(IllegalArgumentException.class ,
+                ()-> scoreboard.startMatch("Team A", "Team A"));
+
+        // Assert
+        assertEquals("Home and Away Teams must be different.", argumentException.getMessage());
+    }
+
+    @Test
     void testGetMatchById_ValidId() {
         // Arrange
         String matchId = "match1";
