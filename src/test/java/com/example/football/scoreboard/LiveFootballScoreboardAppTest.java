@@ -128,4 +128,25 @@ public class LiveFootballScoreboardAppTest {
 
     }
 
+    @Test
+    void testUpdatetMatchScore_ByTeamNames() {
+
+        Match match = new Match("Team A", "Team B", 0, 0 , LocalDateTime.now());
+
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(2).thenReturn(4).thenReturn(3).thenReturn(5);
+        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn("Team A").thenReturn("Team B").thenReturn("");
+        when(mockScoreboard.getMatch("Team A", "Team B")).thenReturn(match);
+        doNothing().when(mockScoreboard).updateMatchScore(match.getMatchId(), 4,3);
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).getMatch("Team A", "Team B");
+        verify(mockScoreboard).updateMatchScore(match.getMatchId(), 4,3);
+
+    }
+
+
 }
