@@ -11,9 +11,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class LiveFootballScoreboardAppTest {
@@ -53,8 +56,10 @@ public class LiveFootballScoreboardAppTest {
         Match match = new Match("Team A", "Team B", 0, 0 , LocalDateTime.now());
 
         // mock user input
-        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(3).thenReturn(3).thenReturn(5);
-        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn(match.getMatchId()).thenReturn("");
+        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(5);
+        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("")
+                .thenReturn(match.getMatchId())
+                .thenReturn("3").thenReturn("3");
         doNothing().when(mockScoreboard).updateMatchScore(match.getMatchId(), 3,3);
 
         // Act
@@ -73,8 +78,16 @@ public class LiveFootballScoreboardAppTest {
         int awayTeamScore = 2;
 
         // Simulate user input
-        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn(matchId).thenReturn(""); // Invalid Match ID
-        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(homeTeamScore).thenReturn(awayTeamScore).thenReturn(5);; // Scores
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(matchId)
+                .thenReturn(String.valueOf(homeTeamScore))
+                .thenReturn(String.valueOf(awayTeamScore))
+                .thenReturn(""); // Invalid Match ID
+
+        when(mockInputWrapper.nextInt()).thenReturn(2)
+                .thenReturn(1)
+                .thenReturn(5); // Scores
 
         // Simulate exception from the scoreboard
         doThrow(new MatchNotFoundException("Match not found")).when(mockScoreboard).updateMatchScore(matchId, homeTeamScore, awayTeamScore);
@@ -95,8 +108,14 @@ public class LiveFootballScoreboardAppTest {
         int awayTeamScore = 2;
 
         // Simulate user input
-        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn(matchId).thenReturn(""); // Invalid Match ID
-        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(homeTeamScore).thenReturn(awayTeamScore).thenReturn(5); // Scores
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(matchId)
+                .thenReturn(String.valueOf(homeTeamScore))
+                .thenReturn(String.valueOf(awayTeamScore))
+                .thenReturn(""); // Invalid Match ID
+
+        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(5); // Scores
 
         // Simulate exception from the scoreboard
         doThrow(new MatchNotFoundException("Match not found")).when(mockScoreboard).updateMatchScore(matchId, homeTeamScore, awayTeamScore);
@@ -117,7 +136,11 @@ public class LiveFootballScoreboardAppTest {
         int awayTeamScore = 2;
 
         // Simulate user input
-        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn(matchId).thenReturn("");
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn(matchId)
+                .thenReturn("");
+
         when(mockInputWrapper.nextInt()).thenReturn(3).thenReturn(5);
 
         // Act
@@ -134,9 +157,18 @@ public class LiveFootballScoreboardAppTest {
         Match match = new Match("Team A", "Team B", 0, 0 , LocalDateTime.now());
 
         // mock user input
-        when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(2).thenReturn(4).thenReturn(3).thenReturn(5);
-        when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("").thenReturn("Team A").thenReturn("Team B").thenReturn("");
+        when(mockInputWrapper.nextInt()).thenReturn(2)
+                .thenReturn(2)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn("Team A")
+                .thenReturn("Team B")
+                .thenReturn("4")
+                .thenReturn("3");
         when(mockScoreboard.getMatch("Team A", "Team B")).thenReturn(match);
+
         doNothing().when(mockScoreboard).updateMatchScore(match.getMatchId(), 4,3);
 
         // Act
@@ -148,5 +180,27 @@ public class LiveFootballScoreboardAppTest {
 
     }
 
+    @Test
+    void testUpdatetMatchScore_BySameTeamNames() {
 
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(2)
+                .thenReturn(2)
+                .thenReturn(5);
+
+        when(mockInputWrapper.nextLine()).thenReturn("")
+                .thenReturn("")
+                .thenReturn("Team A")
+                .thenReturn("Team A")
+                .thenReturn("2")
+                .thenReturn("2");
+
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard, never()).getMatch("Team A", "Team A");
+        verify(mockScoreboard, never()).updateMatchScore("matchId", 4,3);
+
+    }
 }

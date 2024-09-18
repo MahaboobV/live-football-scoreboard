@@ -6,6 +6,7 @@ import com.example.football.scoreboard.impl.Scoreboard;
 import com.example.football.scoreboard.model.InputWrapper;
 import com.example.football.scoreboard.model.Match;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class LiveFootballScoreboardApp {
@@ -64,6 +65,7 @@ public class LiveFootballScoreboardApp {
         System.out.println("4. View Live match summary");
         System.out.println("5. Exit");
     }
+
     private void startMatch(InputWrapper inputWrapper, Scoreboard scoreboard) {
 
         String homeTeam = getInput("Enter Home Team :", inputWrapper);
@@ -83,17 +85,16 @@ public class LiveFootballScoreboardApp {
         return inputWrapper.nextLine();
     }
 
-
     private void displayMatchStartSuccess(String homeTeam, String awayTeam, Match match) {
         if(match != null) {
             System.out.println("Match started successfully : "+ homeTeam+ " vs "+awayTeam);
             System.out.println("Match Id : "+match.getMatchId());
         }
     }
+
     private void displayErrorMessage(RuntimeException e) {
         System.out.println("Error :" + e.getMessage());
     }
-
 
     private void updateMatchScore(InputWrapper inputWrapper, Scoreboard scoreboard) {
         System.out.println("\n Select an option:");
@@ -119,54 +120,84 @@ public class LiveFootballScoreboardApp {
     }
 
     private void updateScoreByMatchId(InputWrapper inputWrapper, Scoreboard scoreboard) {
-        System.out.println("Enter Match ID :");
-        String matchId = inputWrapper.nextLine();
+        String matchId = getInput("Enter Match ID :", inputWrapper);
 
-        int[] scores = readScores(inputWrapper);
-        int homeTeamScore = scores[0];
-        int awayTeamScore = scores[1];
+        Integer homeTeamScore = getInputInt("Enter Home Team Score:", inputWrapper);
+        Integer awayTeamScore = getInputInt("Enter Away Team Score:", inputWrapper);
+
+        // Validate scores
+        if (! isValidScores(homeTeamScore, awayTeamScore)){
+            return;
+        }
 
         try {
-            scoreboard.updateMatchScore(matchId, homeTeamScore, awayTeamScore);
+            scoreboard.updateMatchScore(matchId, Objects.requireNonNull(homeTeamScore), Objects.requireNonNull(awayTeamScore));
             System.out.println("Score updated : Home Team " + homeTeamScore + " - Away Team " + awayTeamScore);
         } catch (IllegalArgumentException | MatchNotFoundException e) {
             System.out.println("Error :" + e.getMessage());
         }
     }
 
-    private int[] readScores(InputWrapper inputWrapper) {
-        System.out.println("Enter Home Team Score:");
-        int homeTeamScore = inputWrapper.nextInt();
-
-        System.out.println("Enter Away Team Score:");
-        int awayTeamScore = inputWrapper.nextInt();
-        inputWrapper.nextLine();
-
-        return new int[]{homeTeamScore, awayTeamScore};
-    }
-
     private void updateScoreByTeamNames(InputWrapper inputWrapper, Scoreboard scoreboard) {
-        System.out.println("Enter Home Team Name :");
-        String homeTeamName = inputWrapper.nextLine();
+        String homeTeamName = getInput("Enter Home Team Name :", inputWrapper);
+        String awayTeamName = getInput("Enter Away Team Name :", inputWrapper);
 
-        System.out.println("Enter Away Team Name :");
-        String awayTeamName = inputWrapper.nextLine();
+        // Validate team names
+        if(! isValidTeamNames(homeTeamName, awayTeamName)){
+            return;
+        }
 
-        System.out.println("Enter Home Team Score:");
-        int homeTeamScore = inputWrapper.nextInt();
+        Integer homeTeamScore = getInputInt("Enter Home Team Score:", inputWrapper);
+        Integer awayTeamScore = getInputInt("Enter Away Team Score:", inputWrapper);
 
-        System.out.println("Enter Away Team Score:");
-        int awayTeamScore = inputWrapper.nextInt();
-
-        inputWrapper.nextLine();
+        // Validate scores
+        if (! isValidScores(homeTeamScore, awayTeamScore)){
+            return;
+        }
 
         try {
             Match match = scoreboard.getMatch(homeTeamName, awayTeamName);
-            scoreboard.updateMatchScore(match.getMatchId(), homeTeamScore, awayTeamScore);
+            scoreboard.updateMatchScore(match.getMatchId(), Objects.requireNonNull(homeTeamScore), Objects.requireNonNull(awayTeamScore));
 
             System.out.println("Score updated : Home Team " + homeTeamScore + " - Away Team " + awayTeamScore);
         } catch (IllegalArgumentException | MatchNotFoundException e) {
             System.out.println("Error :" + e.getMessage());
+        }
+    }
+
+    private boolean isValidTeamNames(String homeTeamName, String awayTeamName) {
+        if (homeTeamName.isEmpty() || awayTeamName.isEmpty()) {
+            System.out.println("Error: Team names cannot be empty.");
+            return false;
+        }
+        if (homeTeamName.equals(awayTeamName)) {
+            System.out.println("Error: Home and Away Teams must be different.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidScores(Integer homeTeamScore, Integer awayTeamScore) {
+        if (homeTeamScore == null || awayTeamScore == null) {
+            System.out.println("Error: Invalid score input. Please enter numeric values.");
+            return false;
+        }
+        if (homeTeamScore < 0 || awayTeamScore < 0) {
+            System.out.println("Error: Scores cannot be negative.");
+            return false;
+        }
+        return true;
+    }
+
+    private Integer getInputInt(String prompt, InputWrapper inputWrapper) {
+
+        System.out.println(prompt);
+        String input = inputWrapper.nextLine().trim();
+
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            return null; // Return null to indicate invalid input
         }
     }
 
