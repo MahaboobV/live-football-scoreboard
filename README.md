@@ -7,3 +7,66 @@ A simple Java-based library that allows you to track live football matches, upda
 - [Installation](#installation)
 - [Usage](#usage)
 - [Running Tests](#running-tests)
+
+##Installation
+
+### Clone the Repository
+ To get a copy of the project on your local machine, run:
+
+```bash
+git clone https://github.com/MahaboobV/live-football-scoreboard.git
+
+```
+
+### Build the project 
+
+Navigate into the project directory:
+
+```bash
+cd LiveFootballScoreboard
+```
+Build the project using your preferred build tool:
+
+- For Maven
+
+```bash
+mvn clean install
+```
+- For gradle
+ 
+ ```bash
+gradle build
+```
+
+### Run the project
+
+For Console Application:
+
+- For Maven:
+ ```bash
+mvn exec:java -Dexec.mainClass="com.example.football.scoreboard.LiveFootballScoreboardApp"
+```
+- For Gradle
+ ```bash
+gradle run
+```
+
+### Run the tests
+1. Unit Tests: Run unit tests to verify functionality.
+
+- Using Maven 
+
+ ```bash
+mvn test
+```
+- Using Gradle
+
+ ```bash
+gradle test
+```
+
+2. Test Coverage: Generate test coverage reports to ensure code quality.
+
+.Using Maven 
+
+
