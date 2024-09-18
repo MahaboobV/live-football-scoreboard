@@ -1,5 +1,6 @@
 package com.example.football.scoreboard;
 
+import com.example.football.scoreboard.exception.MatchNotFoundException;
 import com.example.football.scoreboard.impl.InmemoryMatchStorage;
 import com.example.football.scoreboard.impl.Scoreboard;
 import com.example.football.scoreboard.model.InputWrapper;
@@ -95,7 +96,18 @@ public class LiveFootballScoreboardApp {
 
 
     private void updateMatchScore(InputWrapper inputWrapper, Scoreboard scoreboard) {
+        System.out.println("\n Select an option:");
+        System.out.println("1. Using Match ID :");
+        System.out.println("2. Using Team Names :");
 
+        int selection = inputWrapper.nextInt();
+        inputWrapper.nextLine();
+
+        switch (selection) {
+            case 1 -> updateScoreByMatchId(inputWrapper, scoreboard);
+            case 2 -> updateScoreByTeamNames(inputWrapper, scoreboard);
+            default -> System.out.println("Invalid choice, please choose the right option !");
+        }
     }
 
     private void finishMatch(InputWrapper inputWrapper, Scoreboard scoreboard) {
@@ -107,11 +119,26 @@ public class LiveFootballScoreboardApp {
     }
 
     private void updateScoreByMatchId(InputWrapper inputWrapper, Scoreboard scoreboard) {
+        System.out.println("Enter Match ID :");
+        String matchId = inputWrapper.nextLine();
 
+        System.out.println("Enter Home Team Score:");
+        int homeTeamScore = inputWrapper.nextInt();
+
+        System.out.println("Enter Away Team Score:");
+        int awayTeamScore = inputWrapper.nextInt();
+
+        inputWrapper.nextLine();
+
+        try {
+            scoreboard.updateMatchScore(matchId, homeTeamScore, awayTeamScore);
+            System.out.println("Score updated : Home Team " + homeTeamScore + " - Away Team " + awayTeamScore);
+        } catch (IllegalArgumentException | MatchNotFoundException e) {
+            System.out.println("Error :" + e.getMessage());
+        }
     }
 
     private void updateScoreByTeamNames(InputWrapper inputWrapper, Scoreboard scoreboard) {
-
     }
 
     private void finishMatchByMatchId(InputWrapper inputWrapper, Scoreboard scoreboard) {
