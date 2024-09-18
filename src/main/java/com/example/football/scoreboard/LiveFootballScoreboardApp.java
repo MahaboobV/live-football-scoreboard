@@ -6,6 +6,7 @@ import com.example.football.scoreboard.impl.Scoreboard;
 import com.example.football.scoreboard.model.InputWrapper;
 import com.example.football.scoreboard.model.Match;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -127,7 +128,15 @@ public class LiveFootballScoreboardApp {
     }
 
     private void viewLiveMatchSummary(InputWrapper inputWrapper, Scoreboard scoreboard) {
+        System.out.println("==== Live Match Summary ====");
 
+        List<String> summary = scoreboard.getMatchSummary();
+
+        if(summary.isEmpty()){
+            System.out.println("==== No Live matches at the moment ====");
+        }else {
+            summary.forEach(System.out:: println);
+        }
     }
 
     private void updateScoreByMatchId(InputWrapper inputWrapper, Scoreboard scoreboard) {
