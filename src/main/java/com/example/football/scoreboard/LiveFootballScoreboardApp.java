@@ -64,21 +64,35 @@ public class LiveFootballScoreboardApp {
         System.out.println("5. Exit");
     }
     private void startMatch(InputWrapper inputWrapper, Scoreboard scoreboard) {
-        System.out.println("Enter Home Team :");
-        String homeTeam = inputWrapper.nextLine();
 
-        System.out.println("Enter Away Team :");
-        String awayTeam = inputWrapper.nextLine();
+        String homeTeam = getInput("Enter Home Team :", inputWrapper);
+        String awayTeam = getInput("Enter Away Team :", inputWrapper);
+
         try {
             Match match = scoreboard.startMatch(homeTeam, awayTeam);
-            if(match != null) {
-                System.out.println("Match started successfully : "+ homeTeam+ " vs "+awayTeam);
-                System.out.println("Match Id : "+match.getMatchId());
-            }
+            displayMatchStartSuccess(homeTeam, awayTeam, match);
+
         }catch (IllegalArgumentException | IllegalStateException e) {
-            System.out.println("Error :" + e.getMessage());
+            displayErrorMessage(e);
         }
     }
+
+    private String getInput(String propmt, InputWrapper inputWrapper) {
+        System.out.println(propmt);
+        return inputWrapper.nextLine();
+    }
+
+
+    private void displayMatchStartSuccess(String homeTeam, String awayTeam, Match match) {
+        if(match != null) {
+            System.out.println("Match started successfully : "+ homeTeam+ " vs "+awayTeam);
+            System.out.println("Match Id : "+match.getMatchId());
+        }
+    }
+    private void displayErrorMessage(RuntimeException e) {
+        System.out.println("Error :" + e.getMessage());
+    }
+
 
     private void updateMatchScore(InputWrapper inputWrapper, Scoreboard scoreboard) {
 
