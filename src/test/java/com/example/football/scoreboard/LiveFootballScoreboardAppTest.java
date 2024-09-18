@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -385,5 +386,23 @@ public class LiveFootballScoreboardAppTest {
         // Assert
         verify(mockScoreboard).getMatch(homeTeam, awayTeam);
         verify(mockScoreboard).finishMatch(match.getMatchId());
+    }
+
+    @Test
+    void testGetMatchSummary() {
+
+        String matchSummary1 = "1. Team A 1 - Team B 0";
+        String matchSummary2 = "2. Team C 1 - Team D 2";
+        // mock user input
+        when(mockInputWrapper.nextInt()).thenReturn(4).thenReturn(5);
+        when(mockInputWrapper.nextLine()).thenReturn("");
+
+        when(mockScoreboard.getMatchSummary()).thenReturn(List.of(matchSummary1, matchSummary2));
+        // Act
+        liveFootballScoreboardApp.run();
+
+        // Assert
+        verify(mockScoreboard).getMatchSummary();
+
     }
 }
