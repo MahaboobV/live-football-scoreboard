@@ -146,6 +146,28 @@ public class LiveFootballScoreboardApp {
     }
 
     private void updateScoreByTeamNames(InputWrapper inputWrapper, Scoreboard scoreboard) {
+        System.out.println("Enter Home Team Name :");
+        String homeTeamName = inputWrapper.nextLine();
+
+        System.out.println("Enter Away Team Name :");
+        String awayTeamName = inputWrapper.nextLine();
+
+        System.out.println("Enter Home Team Score:");
+        int homeTeamScore = inputWrapper.nextInt();
+
+        System.out.println("Enter Away Team Score:");
+        int awayTeamScore = inputWrapper.nextInt();
+
+        inputWrapper.nextLine();
+
+        try {
+            Match match = scoreboard.getMatch(homeTeamName, awayTeamName);
+            scoreboard.updateMatchScore(match.getMatchId(), homeTeamScore, awayTeamScore);
+
+            System.out.println("Score updated : Home Team " + homeTeamScore + " - Away Team " + awayTeamScore);
+        } catch (IllegalArgumentException | MatchNotFoundException e) {
+            System.out.println("Error :" + e.getMessage());
+        }
     }
 
     private void finishMatchByMatchId(InputWrapper inputWrapper, Scoreboard scoreboard) {
