@@ -8,7 +8,7 @@ A simple Java-based library that allows you to track live football matches, upda
 - [Usage](#usage)
 - [Running Tests](#running-tests)
 
-##Installation
+###Installation
 
 ### Clone the Repository
  To get a copy of the project on your local machine, run:
@@ -52,7 +52,7 @@ gradle run
 ```
 
 ### Run the tests
-1. Unit Tests: Run unit tests to verify functionality.
+1. **Unit Tests**: Run unit tests to verify functionality.
 
 - Using Maven 
 
@@ -65,8 +65,35 @@ mvn test
 gradle test
 ```
 
-2. Test Coverage: Generate test coverage reports to ensure code quality.
+2. **Test Coverage** : Generate test coverage reports to ensure code quality.
 
-.Using Maven 
+To ensure the quality of the codebase, used **JaCoCo** for generating test coverage reports. Below are the steps to generate and view the coverage report: 
 
 
+####Steps to Generate Test Coverage:
+
+1. ***Run the tests***:
+
+   Execute the following Maven command to run the tests:
+
+ ```bash
+ mvn clean test
+  ```
+
+2. ***Generate the JaCoCo coverage report***:
+
+   After the tests are run, you can generate the test coverage report by executing:
+
+```bash
+  mvn jacoco:report
+
+```
+
+3. ***View the report***:
+   The coverage report will be generated in the following location:
+
+```bash
+  target/site/jacoco/index.html
+
+```
+   Open this file in a web browser to view the detailed coverage statistics.
