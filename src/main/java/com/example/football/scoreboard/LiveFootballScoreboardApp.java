@@ -32,6 +32,10 @@ public class LiveFootballScoreboardApp {
             displayMenu();
 
             System.out.println("Enter Your Choice :");
+
+            // Validate the input
+            checkInput();
+
             int choice = inputWrapper.nextInt();
             inputWrapper.nextLine();
 
@@ -47,6 +51,7 @@ public class LiveFootballScoreboardApp {
                 default -> System.out.println("Invalid choice, please try again !");
             }
         }
+        inputWrapper.close(); // Close the scanner once input is done
     }
 
     public static void main(String[] args) {
@@ -276,6 +281,13 @@ public class LiveFootballScoreboardApp {
             System.out.println("Error: " + e.getMessage());
         } catch (MatchNotFoundException e) {
             System.out.println("Error: Match not found with Match ID: " + matchId);
+        }
+    }
+
+    private void checkInput() {
+        while(!inputWrapper.hasNextInt()) {
+            System.out.println("Invalid input, please enter valid choice from the display !");
+            inputWrapper.next();
         }
     }
 }

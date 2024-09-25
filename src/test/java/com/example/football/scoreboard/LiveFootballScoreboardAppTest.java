@@ -50,6 +50,7 @@ public class LiveFootballScoreboardAppTest {
 
         Match match = new Match("Team A", "Team B", 0, 0 , LocalDateTime.now());
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextInt()).thenReturn(1).thenReturn(5);
         when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("Team A").thenReturn("Team B");
         when(mockScoreboard.startMatch("Team A", "Team B")).thenReturn(match);
@@ -66,6 +67,7 @@ public class LiveFootballScoreboardAppTest {
         Match match = new Match("Team A", "Team B", 0, 0 , LocalDateTime.now());
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextInt()).thenReturn(2).thenReturn(1).thenReturn(5);
         when(mockInputWrapper.nextLine()).thenReturn("").thenReturn("")
                 .thenReturn(match.getMatchId())
@@ -88,6 +90,7 @@ public class LiveFootballScoreboardAppTest {
         int awayTeamScore = 2;
 
         // Simulate user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextLine()).thenReturn("")
                 .thenReturn("")
                 .thenReturn(matchId)
@@ -118,6 +121,7 @@ public class LiveFootballScoreboardAppTest {
         int awayTeamScore = 2;
 
         // Simulate user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextLine()).thenReturn("")
                 .thenReturn("")
                 .thenReturn(matchId)
@@ -146,6 +150,7 @@ public class LiveFootballScoreboardAppTest {
         int awayTeamScore = 2;
 
         // Simulate user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextLine()).thenReturn("")
                 .thenReturn("")
                 .thenReturn(matchId)
@@ -167,6 +172,7 @@ public class LiveFootballScoreboardAppTest {
         Match match = new Match("Team A", "Team B", 0, 0 , LocalDateTime.now());
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextInt()).thenReturn(2)
                 .thenReturn(2)
                 .thenReturn(5);
@@ -194,6 +200,7 @@ public class LiveFootballScoreboardAppTest {
     void testUpdatetMatchScore_BySameTeamNames() {
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextInt()).thenReturn(2)
                 .thenReturn(2)
                 .thenReturn(5);
@@ -220,6 +227,7 @@ public class LiveFootballScoreboardAppTest {
         String matchId = "";
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextInt()).thenReturn(3)
                 .thenReturn(1)
                 .thenReturn(5);
@@ -242,6 +250,7 @@ public class LiveFootballScoreboardAppTest {
         String nonExistentMatchId = "12345";
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextInt()).thenReturn(3)
                 .thenReturn(1)
                 .thenReturn(5);
@@ -266,6 +275,7 @@ public class LiveFootballScoreboardAppTest {
         String matchId = "matchId12345";
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextInt()).thenReturn(3)
                 .thenReturn(1)
                 .thenReturn(5);
@@ -291,6 +301,7 @@ public class LiveFootballScoreboardAppTest {
         String matchId = UUID.randomUUID().toString();
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
         when(mockInputWrapper.nextInt()).thenReturn(3)
                 .thenReturn(1)
                 .thenReturn(5);
@@ -316,6 +327,8 @@ public class LiveFootballScoreboardAppTest {
         String awayTeam = "Team B";
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
+
         when(mockInputWrapper.nextInt()).thenReturn(3)
                 .thenReturn(2)
                 .thenReturn(5);
@@ -341,6 +354,8 @@ public class LiveFootballScoreboardAppTest {
         String awayTeam = "Team A";
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
+
         when(mockInputWrapper.nextInt()).thenReturn(3)
                 .thenReturn(2)
                 .thenReturn(5);
@@ -368,6 +383,8 @@ public class LiveFootballScoreboardAppTest {
         Match match = new Match(homeTeam, awayTeam, 0, 0, LocalDateTime.now());
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
+
         when(mockInputWrapper.nextInt()).thenReturn(3)
                 .thenReturn(2)
                 .thenReturn(5);
@@ -393,6 +410,8 @@ public class LiveFootballScoreboardAppTest {
     void testGetMatchSummary_WithNoLiveMatches() {
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
+
         when(mockInputWrapper.nextInt()).thenReturn(4).thenReturn(5);
         when(mockInputWrapper.nextLine()).thenReturn("");
 
@@ -409,6 +428,8 @@ public class LiveFootballScoreboardAppTest {
     void testGetMatchSummary_ExceptionThrown() {
 
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
+
         when(mockInputWrapper.nextInt()).thenReturn(4).thenReturn(5);
         when(mockInputWrapper.nextLine()).thenReturn("");
 
@@ -428,6 +449,8 @@ public class LiveFootballScoreboardAppTest {
         String matchSummary1 = "1. Team A 1 - Team B 0";
         String matchSummary2 = "2. Team C 1 - Team D 2";
         // mock user input
+        when(mockInputWrapper.hasNextInt()).thenReturn(true);
+
         when(mockInputWrapper.nextInt()).thenReturn(4).thenReturn(5);
         when(mockInputWrapper.nextLine()).thenReturn("");
 
