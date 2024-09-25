@@ -18,4 +18,15 @@ public class InputWrapper {
         return scanner.nextLine();
     }
 
+    public boolean hasNextInt() {
+        return scanner.hasNextInt();
+    }
+
+    public String next() {
+        return scanner.next();
+    }
+
+    public void close() {
+        scanner.close();
+    }
 }
