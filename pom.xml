@@ -107,6 +107,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Maven Jar Plugin for creating executable JARs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!-- Specify the fully qualified main class -->
+                            <mainClass>com.example.football.scoreboard.LiveFootballScoreboardApp</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
