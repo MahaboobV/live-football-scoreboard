@@ -8,7 +8,7 @@ A simple Java-based library that allows you to track live football matches, upda
 - [Usage](#usage)
 - [Running Tests](#running-tests)
 
-###Installation
+### Installation
  1. ***Prerequisites***: 
   
      Make sure the following installed: 
@@ -60,7 +60,7 @@ mvn exec:java -Dexec.mainClass="com.example.football.scoreboard.LiveFootballScor
 or 
 
 ```bash
-java -jar target/LiveFootballScoreboardApp.jar
+java -jar target/LiveFootballScoreboardApp-{version}.jar
 ```
 
 - For Gradle
