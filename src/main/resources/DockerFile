@@ -1,0 +1,22 @@
+# Use a Java image as the base
+
+FROM
+
+# Set the working directory inside the container
+
+WORKDIR /
+
+# Copy the application JAR file into the container
+
+COPY target/live-football-scoreboard-1.0.0.jar live-football-scoreboard-1.0.0.jar
+
+# Expose the port the application will run on
+
+EXPOSE 8081
+
+# Define environment variables
+
+
+
+# Command to run the application
+CMD["java", "-jar", "live-football-scoreboard-1.0.0.jar"]
