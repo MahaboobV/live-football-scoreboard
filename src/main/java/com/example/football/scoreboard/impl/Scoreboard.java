@@ -23,7 +23,7 @@ public class Scoreboard implements MatchOperations {
 
     // Create a new match, sets it as live, and saves it to storage
     @Override
-    public Match startMatch(String homeTeam, String awayTeam) {
+    public synchronized Match startMatch(String homeTeam, String awayTeam) {
         //Validate input
         if(homeTeam == null || homeTeam.trim().isEmpty() || awayTeam == null || awayTeam.trim().isEmpty()) {
             throw new IllegalArgumentException("Home and Away Teams must not be null or empty");
@@ -74,7 +74,7 @@ public class Scoreboard implements MatchOperations {
     }
 
     @Override
-    public void updateMatchScore(String matchId, int homeTeamScore, int awayTeamScore) {
+    public synchronized void updateMatchScore(String matchId, int homeTeamScore, int awayTeamScore) {
 
         if (homeTeamScore < 0 || awayTeamScore < 0) {
             throw new IllegalArgumentException("Score cannot be negative");

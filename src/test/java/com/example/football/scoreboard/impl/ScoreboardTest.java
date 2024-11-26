@@ -6,6 +6,7 @@ import com.example.football.scoreboard.exception.MatchNotFoundException;
 import com.example.football.scoreboard.exception.MatchUpdateException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ScoreboardTest {
@@ -79,6 +80,7 @@ public class ScoreboardTest {
         assertTrue(match.isLive());
 
     }
+
     @Test
     void testStartMatch_AlreadyLive() {
 
@@ -154,6 +156,57 @@ public class ScoreboardTest {
 
         // Assert
         assertEquals("Home and Away Teams must be different.", argumentException.getMessage());
+    }
+
+    @Test
+    void testStartMatch_ConcurrentStart() throws InterruptedException {
+
+        // Arrange
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+
+        AtomicInteger exceptionCount = new AtomicInteger(0);
+        AtomicReference<Match> matchRef= new AtomicReference<>();
+
+        Match match = new Match(homeTeam, awayTeam, 0 , 0, LocalDateTime.now());
+        match.setLive(true);
+
+        // Mock findMatch to return Null (no match is live between these two teams)
+        when(matchStorage.findMatch(homeTeam, awayTeam)).thenReturn(null).thenReturn(match);
+
+        // Mock getAllMatches to return empty list
+        when(matchStorage.getAllMatches()).thenReturn(Collections.emptyList());
+
+
+        Runnable startMatchTask = () -> {
+            try{
+                matchRef.set(scoreboard.startMatch(homeTeam, awayTeam));
+            }catch (Exception e){
+                exceptionCount.incrementAndGet();
+            }
+        };
+
+        // Creating two threads to simulate concurrent match starts
+
+        Thread thread1 = new Thread(startMatchTask);
+        Thread thread2 = new Thread(startMatchTask);
+
+        //start both threads
+
+        thread1.start();
+        thread2.start();
+
+        thread1.join();
+        thread2.join();
+
+        // Asserts
+        verify(matchStorage, times(1)).saveMatch(any(Match.class));
+
+        assertNotNull(matchRef.get().getMatchId());
+        assertEquals("Team A", matchRef.get().getHomeTeam());
+        assertEquals("Team A", matchRef.get().getHomeTeam());
+        assertTrue(matchRef.get().isLive());
+        assertEquals(1, exceptionCount.get());
     }
 
     @Test
@@ -299,6 +352,58 @@ public class ScoreboardTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> scoreboard.updateMatchScore(matchId, 1, -1));
         assertEquals("Score cannot be negative", exception.getMessage());
     }
+
+    /*@Test
+    void testUpdateMatch_ConcurrentUpdate() throws InterruptedException {
+
+        // Arrange
+        String matchId = "match1";
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+        LocalDateTime now = LocalDateTime.now();
+
+        Match match = new Match(homeTeam, awayTeam, 0, 0, now);
+
+        when(matchStorage.findMatch(matchId)).thenReturn(match).thenReturn(match);
+
+        ArgumentCaptor<Match> matchCaptor = ArgumentCaptor.forClass(Match.class);
+
+        AtomicInteger saveCount = new AtomicInteger(0);
+
+        doAnswer(invocation -> {
+            saveCount.incrementAndGet();
+            return null;
+        }).when(matchStorage).saveMatch(any(Match.class));
+
+        Runnable updateMatchTask = () -> {
+            try{
+                scoreboard.updateMatchScore(match.getMatchId(), 1, 2);
+            }catch (Exception e){
+                System.out.println("Exception while updating score");
+            }
+        };
+
+        // Creating two threads to simulate concurrent match update score
+
+        Thread thread1 = new Thread(updateMatchTask);
+        Thread thread2 = new Thread(updateMatchTask);
+
+        //start both threads
+        thread1.start();
+        thread2.start();
+
+        thread1.join();
+        thread2.join();
+
+
+        verify(matchStorage).saveMatch(matchCaptor.capture());
+
+        Match savedMatch = matchCaptor.getValue();
+        // Asserts
+        assertEquals(1, savedMatch.getHomeTeamScore());
+        assertEquals(2, savedMatch.getAwayTeamScore());
+        assertEquals(2, saveCount.get());
+    }*/
 
     @Test
     void testFinishMatch_ValidMatch() {

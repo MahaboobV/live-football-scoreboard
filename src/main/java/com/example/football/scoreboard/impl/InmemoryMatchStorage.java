@@ -7,11 +7,12 @@ import com.example.football.scoreboard.exception.MatchNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class InmemoryMatchStorage implements MatchStorage {
 
-    private final Map<String, Match> matchMap = new HashMap<>();
+    private final Map<String, Match> matchMap = new ConcurrentHashMap<>();
 
     @Override
     public void saveMatch(Match match) {

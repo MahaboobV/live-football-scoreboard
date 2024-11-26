@@ -13,9 +13,9 @@ import java.util.Scanner;
 
 public class LiveFootballScoreboardApp {
 
-    private InputWrapper inputWrapper;
+    private final InputWrapper inputWrapper;
 
-    private Scoreboard scoreboard;
+    private final Scoreboard scoreboard;
 
     public LiveFootballScoreboardApp(InputWrapper inputWrapper, Scoreboard scoreboard) {
         this.inputWrapper = inputWrapper;
@@ -59,9 +59,13 @@ public class LiveFootballScoreboardApp {
         MatchStorage matchStorage = new InmemoryMatchStorage(); // In-memory storage for matches
         Scoreboard scoreboard = new Scoreboard(matchStorage); // Scoreboard that operates on the storage
 
-        InputWrapper inputWrapper = new InputWrapper(new Scanner(System.in));
-        LiveFootballScoreboardApp app = new LiveFootballScoreboardApp(inputWrapper, scoreboard);
-        app.run();
+        try (Scanner scanner = new Scanner(System.in)) {
+            InputWrapper inputWrapper = new InputWrapper(scanner);
+            LiveFootballScoreboardApp app = new LiveFootballScoreboardApp(inputWrapper, scoreboard);
+            app.run();
+        }catch (Exception e) {
+            System.err.println("An error occurred: " + e.getMessage());
+        }
     }
 
     private void displayMenu() {

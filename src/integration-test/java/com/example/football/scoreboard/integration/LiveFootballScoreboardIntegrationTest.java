@@ -7,13 +7,20 @@ import com.example.football.scoreboard.impl.Scoreboard;
 import com.example.football.scoreboard.model.Match;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class LiveFootballScoreboardIntegrationTest {
 
@@ -72,6 +79,48 @@ public class LiveFootballScoreboardIntegrationTest {
     }
 
     @Test
+    void testStartMatch_ConcurrentStart() throws InterruptedException {
+
+        // Arrange
+        String homeTeam = "Team A";
+        String awayTeam = "Team B";
+
+        AtomicInteger exceptionCount = new AtomicInteger(0);
+        AtomicReference<Match> matchRef= new AtomicReference<>();
+
+
+        Runnable startMatchTask = () -> {
+            try{
+                matchRef.set(scoreboard.startMatch(homeTeam, awayTeam));
+            }catch (Exception e){
+                exceptionCount.incrementAndGet();
+            }
+        };
+
+        // Creating two threads to simulate concurrent match starts
+
+        Thread thread1 = new Thread(startMatchTask);
+        Thread thread2 = new Thread(startMatchTask);
+
+        //start both threads
+
+        thread1.start();
+        thread2.start();
+
+        thread1.join();
+        thread2.join();
+
+        // Asserts
+
+        assertNotNull(matchRef.get().getMatchId());
+        assertEquals("Team A", matchRef.get().getHomeTeam());
+        assertEquals("Team A", matchRef.get().getHomeTeam());
+        assertTrue(matchRef.get().isLive());
+        assertEquals(1, exceptionCount.get());
+    }
+
+
+    @Test
     void testUpdateMatchScoreByMatchId() {
         // Arrange
         Match match = scoreboard.startMatch("Team A", "Team B");
@@ -92,6 +141,43 @@ public class LiveFootballScoreboardIntegrationTest {
 
         // Assert
         assertEquals("No match found with ID: "+invalidMatchId, matchNotFoundException.getMessage());
+    }
+
+    @Test
+    void testUpdateMatch_ConcurrentUpdate() throws InterruptedException {
+
+        // Arrange
+        Match match = scoreboard.startMatch("Team A", "Team B");
+
+        AtomicInteger exceptionCount = new AtomicInteger(0);
+
+
+        Runnable startMatchTask = () -> {
+            try{
+                scoreboard.updateMatchScore(match.getMatchId(), 1, 2);
+            }catch (Exception e){
+                exceptionCount.incrementAndGet();
+            }
+        };
+
+        // Creating two threads to simulate concurrent match starts
+
+        Thread thread1 = new Thread(startMatchTask);
+        Thread thread2 = new Thread(startMatchTask);
+
+        //start both threads
+
+        thread1.start();
+        thread2.start();
+
+        thread1.join();
+        thread2.join();
+
+        // Asserts
+
+        assertEquals(1, match.getHomeTeamScore());
+        assertEquals(2, match.getAwayTeamScore());
+        assertEquals(1, exceptionCount.get());
     }
 
     @Test
